@@ -107,22 +107,22 @@ class matrix {
     }
 
     //ALL THE FUCKING ITERATORS
-    iterator begin() {}
-    iterator end() {}
-    const_iterator begin() {}
-    const_iterator end() {}
+    iterator begin() { return pter->begin(); }
+    iterator end() { return pter->end(); }
+    const_iterator begin() const { return pter->begin(); }
+    const_iterator end() const { return pter->end(); }
     
-    row_iterator begin() {}
-    row_iterator end() {}
-    const_row_iterator begin() {}
-    const_row_iterator end() {}
+    row_iterator row_begin(unsigned i) { return col_begin(1) + (rows - 1); }//mi sa che sto scrivendo cose a caso
+    row_iterator row_end(unsigned i) { return col_begin(columns) + (rows - 1); }//non scrivo codice da anni
+    const_row_iterator row_begin(unsigned i) {return col_begin(1) + (rows - 1);}
+    const_row_iterator row_end(unsigned i) {return col_begin(columns) + (rows - 1);}
 
-    column_iterator begin() {}
-    column_iterator end() {}
-    const_column_iterator begin() {}
-    const_column_iterator end(){}
+    column_iterator col_begin(unsigned i) { return pter->begin() + ( i * columns); }
+    column_iterator col_end(unsigned i) { return col_begin(i) + (columns - 1); } //questa potrebbe andare come no, il tempo ce lo dirà
+    const_column_iterator col_begin(unsigned i) const { return pter->begin() + ( i * columns); }
+    const_column_iterator col_end(unsigned i){ return col_begin(i) + (columns - 1); } //idem come sopra
 
-    //KILL ME PLEASE
+    //KILL ME PLEASE , OKAY
   private:
     std::shared_ptr<std::vector<type>> pter;
     unsigned columns,rows;
