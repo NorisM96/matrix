@@ -6,19 +6,31 @@
 #include <ostream> // std::ostream
 #include <vector>
 #include <iterator> // std::forward_iterator_tag
+#include <memory>
 
 template <typename T>
 class matrix {
   public:
+
     typedef unsigned int size_c;
     typedef unsigned int size_r;
     typedef T type;
+    typedef typename std::vector<T>::iterator iterator;
+    typedef typename std::vector<T>::const_iterator const_iterator;
+    typedef typename std::vector<T>::iterator row_iterator;
+	  typedef typename std::vector<T>::const_iterator const_row_iterator;
+
+    typedef index_col_iterator<T> column_iterator;
+    typedef const_index_col_iterator<T> const_column_iterator;
+
+    
+
     //DEFAULT CONSTRUCTOR
-    matrix() : columns(0), rows(0), pter(nullpter) {
+    matrix() : columns(0), rows(0), pter(nullptr) {
 
     }
     //CONSTRUCTOR WHICH CONSTRUCT A MATRIX FILLED WITH ZEROES ON CREATION
-    extern matrix(const size_c cols, const sizer rws) : columns(cols), rows(rws), pter(std::make_shared<std::vector<type>>(cols * rows)) {
+    explicit matrix(const size_c cols, const size_r rws) : columns(cols), rows(rws), pter(std::make_shared<std::vector<type>>(cols * rows)) {
       for(type c: *pter)
         c = type();
     }
@@ -27,7 +39,7 @@ class matrix {
     matrix(const matrix<T> &other) : columns(0), rows(0), pter(nullptr) {
       rows = other.getRows();
       columns = other.getColumns();
-      pter(std::make_shared<std::vector<type>>(cols * rows))
+      pter(std::make_shared<std::vector<type>>(columns * rows));
       //Copy all values with foreach, need to implements iterators first
       /*
         int i = 0;
@@ -110,15 +122,15 @@ class matrix {
     const_iterator begin() const { return pter->begin(); }
     const_iterator end() const { return pter->end(); }
     
-    row_iterator row_begin(unsigned i) { return col_begin(1) + (rows - 1); }//mi sa che sto scrivendo cose a caso
-    row_iterator row_end(unsigned i) { return col_begin(columns) + (rows - 1); }//non scrivo codice da anni
-    const_row_iterator row_begin(unsigned i) {return col_begin(1) + (rows - 1);}
-    const_row_iterator row_end(unsigned i) {return col_begin(columns) + (rows - 1);}
+    row_iterator row_begin(unsigned i) { return pter->begin() + (i * columns); }//mi sa che sto scrivendo cose a caso
+    row_iterator row_end(unsigned i) { return pter->begin() + (i + 1) * columns; }//non scrivo codice da anni
+    const_row_iterator row_begin(unsigned i) const { return pter->begin() + (i * columns); }
+    const_row_iterator row_end(unsigned i) const { return pter->begin() + (i + 1) * columns; }
 
-    column_iterator col_begin(unsigned i) { return pter->begin() + ( i * columns); }
-    column_iterator col_end(unsigned i) { return col_begin(i) + (columns - 1); } //questa potrebbe andare come no, il tempo ce lo dirà
-    const_column_iterator col_begin(unsigned i) const { return pter->begin() + ( i * columns); }
-    const_column_iterator col_end(unsigned i){ return col_begin(i) + (columns - 1); } //idem come sopra
+    column_iterator col_begin(unsigned i) { return  column_iterator(*this, 0, i); }
+    column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i+1); } //questa potrebbe andare come no, il tempo ce lo dirà
+    const_column_iterator col_begin(unsigned i) const { return column_iterator(*this, 0, i); }
+    const_column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i+1); } //idem come sopra
 
   //KILL ME PLEASE , OKAY
   private:
