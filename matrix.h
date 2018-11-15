@@ -4,10 +4,8 @@
 
 #include "iterators.h"
 #include <ostream> // std::ostream
-#include <iostream>
-#include <stdexcept>
+#include <vector>
 #include <iterator> // std::forward_iterator_tag
-#include <cstddef>  // std::pterdiff_t
 
 template <typename T>
 class matrix {
@@ -70,11 +68,11 @@ class matrix {
 
     //OPERATOR () TO DIRECTLY ACCESS THE ELEMENTS 
     type& operator ()( unsigned row, unsigned column ) { 
-		return data->operator[](row*width + column);
+		  return pter->operator[](row*rows + column);
 	  }
 	  
     const T& operator ()( unsigned row, unsigned column ) const { 
-		return data->operator[](row*width + column);
+		  return pter->operator[](row*rows + column);
 	  }
 
     //SUBMATRIX METHOD
@@ -122,10 +120,24 @@ class matrix {
     const_column_iterator col_begin(unsigned i) const { return pter->begin() + ( i * columns); }
     const_column_iterator col_end(unsigned i){ return col_begin(i) + (columns - 1); } //idem come sopra
 
-    //KILL ME PLEASE , OKAY
+  //KILL ME PLEASE , OKAY
   private:
     std::shared_ptr<std::vector<type>> pter;
     unsigned columns,rows;
     
 };
+
+//OVERLOAD OSTREAM OPERATOR
+template <typename T>
+std::ostream &operator<<(std::ostream &os,
+	const matrix<T> &ma){
+		for(int r = 1;r <= ma.getRows();r++){
+      for(int c = 1;c <= ma.getColumns();c++){
+        os <<"[" << ma(r,c) << "] ";
+      }
+      os << std::endl;
+    }
+		return os;
+}
+
 #endif
