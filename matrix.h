@@ -27,23 +27,33 @@ class matrix
 	matrix() : columns(0), rows(0), pter(nullptr){}
 
 	//CONSTRUCTOR WHICH CONSTRUCT A MATRIX FILLED WITH ZEROES ON CREATION
-	explicit matrix(const size_c cols, const size_r rws) : 
-			columns(cols), rows(rws), pter(std::make_shared<std::vector<type>>(cols * rows)){
+	explicit matrix(const size_r rws , const size_c cols)  {
+		columns = cols;
+		rows = rws;
+		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (type c : *pter)
 			c = type();
 	}
 
 	//CONSTRUCTOR WHICH CONSTRUCT A MATRIX FILLED WITH A DEFAULT VALUE ON CREATION
-	explicit matrix(const size_c cols, const size_r rws, const type &val) :
-			 columns(cols), rows(rws), pter(std::make_shared<std::vector<type>>(cols * rows)){
-		for (type c : *pter)
-			c = type(val);
+	explicit matrix(const size_r rws, const size_c cols, const type &val) {
+		columns = cols;
+		rows = rws;
+		pter = std::make_shared<std::vector<T>>(columns * rows);
+		std::cout << "MADONNA PUTTANA" << std::endl;
+		for (unsigned i = 0; i < (columns * rows); i++)
+			pter->operator[](i) = val;
 	}
+	
 
 	//COPY CONSTRUCTOR
-	matrix(const matrix<type> &other) : 
-			columns(other.getColumns()), rows(other.getRows()), pter(std::make_shared<std::vector<type>>(other.getColumns() * other.getRows())){
-		std::cout << "COPY CONSTRUCTOR FIGAAAAAAA";
+	matrix(const matrix<type> &other){
+		columns = other.getColumns();
+		rows = other.getRows();
+		pter = std::make_shared<std::vector<T>>(columns * rows);
+		for (unsigned i = 0; i < (columns * rows); i++)
+			pter->operator[](i) = other.pter->operator[](i);
+		std::cout << "COPY CONSTRUCTOR FIGAAAAAAA" <<std::endl;
 	}
 
 	//MOVE COSTRUCTOR
@@ -96,6 +106,12 @@ class matrix
 	matrix<type> diagonal() const {
 	}
 
+	//DESTRUCTOR
+	~matrix(){
+		columns = 0;
+		rows = 0;
+		std::vector<type>().swap(*pter);
+	}
 	//DIAGONAL MATRIX METHOD(MUST BE USED ONLY BY VECTOR CLASS AND IT RETURNS A DIAGONAL MATRIX WHOSE ELEMENTS BELONGS TO THE VECTOR )
 	const matrix<type> diagonalmatrix() const {
 	}
@@ -135,8 +151,8 @@ class matrix
 //OVERLOAD OSTREAM OPERATOR
 template <typename T>
 std::ostream &operator<<(std::ostream &os, const matrix<T> &ma){
-	for (int r = 0; r < ma.getRows(); r++){
-		for (int c = 0; c < ma.getColumns(); c++){
+	for (unsigned r = 0; r < ma.getRows(); r++){
+		for (unsigned c = 0; c < ma.getColumns(); c++){
 			os << "[" << ma(r, c) << "] ";
 		}
 		os << std::endl;
