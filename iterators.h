@@ -30,11 +30,11 @@ class index_col_iterator {
 		return row != other.row || column != other.column;
 	}
 	
-	index_col_iterator(matrix<T> m, unsigned r, unsigned c) : 
+	index_col_iterator(matrix<T> &m, unsigned r, unsigned c) : 
 			mat(m), row(r), column(c) {}
 
     private:
-	const matrix<T>& mat;
+	matrix<T>& mat;
 	unsigned row, column;    
 };
 
