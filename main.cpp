@@ -38,7 +38,7 @@ int main() {
         i++;
     }
 
-    std::cout << "\n\n";
+    std::cout << "\n";
     
     auto iter1 = D.col_begin(1);
     auto iter2 = D.col_begin(2);
@@ -51,5 +51,21 @@ int main() {
         std::cout << "equivalence between iterators test passed" << std::endl;
     }
 
+    std::cout << "\n\n\n";
 
+    i= 0;
+    int rowa = 1;
+    //prova iteratore riga
+    std::cout << "PROVA ITERATORE RIGA: " << std::endl;
+    for(auto iter = D.row_begin(0); iter != D.row_end(3); ++iter){
+        if(i == 5 || i == 0){
+            std::cout << "\nRiga " << rowa << ": ";
+            i=0;
+            rowa++;
+        }
+        std::cout << *iter << " ";
+        i++;
+        
+    }
+    
 }

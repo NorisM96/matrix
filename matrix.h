@@ -40,7 +40,6 @@ class matrix
 		columns = cols;
 		rows = rws;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
-		std::cout << "MADONNA PUTTANA" << std::endl;
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = val;
 	}
@@ -87,12 +86,12 @@ class matrix
 
 	//OPERATOR () TO DIRECTLY ACCESS THE ELEMENTS
 	type &operator()(unsigned row, unsigned column) {
-		return pter->operator[](row *rows + column);
+		return pter->operator[](row *columns + column);
 	}
 
 
 	const type &operator()(unsigned row, unsigned column) const {
-		return pter->operator[](row *rows + column);
+		return pter->operator[](row * columns + column);
 	}
 
 	//SUBMATRIX METHOD
@@ -143,8 +142,9 @@ class matrix
 	const_column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i + 1); } //idem come sopra
 
 	//KILL ME PLEASE , OKAY
+
   private:
-	std::shared_ptr<std::vector<type>> pter;
+  	std::shared_ptr<std::vector<type>> pter;
 	unsigned columns, rows;
 };
 
