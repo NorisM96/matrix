@@ -85,8 +85,18 @@ int main() {
     std::cout << R;
     std::cout<<"TEST SOTTOMATRICE" << std::endl;
     auto S = C.subMatrix(1,1,4,5);
-    std::cout<< "MATRICE SUB" << std::endl;
-    std::cout << S;
     std::cout<< "MATRICE NORMALE" <<std::endl;
     std::cout << C;
+    std::cout<< "MATRICE SUB" << std::endl;
+    std::cout << S;
+    auto G = S.transpose();
+    std::cout<< "MATRICE TRANSPOSTA" << std::endl;
+    std::cout << G;
+    std::cout<< "PROVO A CAMBIARE UN ELEMENTO, DOVREBBE MODIFICARE TUTTE LE MATRICI" << std::endl;
+    G(0, 0) = 0;
+    std::cout<<"TUTTE LE MATRICI DOVREBBERO AVERE UNO ZERO" << std::endl;
+    std::cout << G;
+    std::cout << S;
+    std::cout << C;
+    std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl    
 }
