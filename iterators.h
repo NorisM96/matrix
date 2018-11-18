@@ -1,5 +1,5 @@
-#ifndef _MATRIX_ITERATORS_H_
-#define _MATRIX_ITERATORS_H_
+#ifndef MATRIX_ITERATORS_H_
+#define MATRIX_ITERATORS_H_
 
 #include"matrix_forward.h"
 
@@ -30,11 +30,14 @@ class index_col_iterator {
 		return row != other.row || column != other.column;
 	}
 	
-	index_col_iterator(matrix<T> &m, unsigned r, unsigned c) : 
+	index_col_iterator(Matrix<T> &m, unsigned r, unsigned c) : 
+			mat(m), row(r), column(c) {}
+
+	index_col_iterator(MatrixTranspose<T> &m, unsigned r, unsigned c) : 
 			mat(m), row(r), column(c) {}
 
     private:
-	matrix<T>& mat;
+	Matrix<T>& mat;
 	unsigned row, column;    
 };
 
@@ -65,11 +68,11 @@ class const_index_col_iterator {
 		return row != other.row || column != other.column;
 	}
 	
-	const_index_col_iterator(const matrix<T> &m, unsigned r, unsigned c) : 
+	const_index_col_iterator(const Matrix<T> &m, unsigned r, unsigned c) : 
 			mat(m), row(r), column(c) {}
 
     private:
-	const matrix<T>& mat;
+	const Matrix<T>& mat;
 	unsigned row, column;    
 };
 
@@ -103,11 +106,11 @@ class index_row_iterator {
 	}
 	
 	
-	index_row_iterator(matrix<T> &mat, unsigned r, unsigned c) : 
+	index_row_iterator(Matrix<T> &mat, unsigned r, unsigned c) : 
 			mtrx(mat), row_pos(r), col_pos(c) {}
 
     private:
-	const matrix<T>& mtrx;
+	const Matrix<T>& mtrx;
 	unsigned row_pos, col_pos;    
 };
 
@@ -139,11 +142,11 @@ class const_index_row_iterator {
 	}
 	
 	
-	const_index_row_iterator(const matrix<T> &mat, unsigned r, unsigned c) : 
+	const_index_row_iterator(const Matrix<T> &mat, unsigned r, unsigned c) : 
 			mtrx(mat), row_pos(r), col_pos(c) {}
 
     private:
-	const matrix<T>& mtrx;
+	const Matrix<T>& mtrx;
 	unsigned row_pos, col_pos;    
 };
 */

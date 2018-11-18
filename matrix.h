@@ -7,13 +7,67 @@
 #include <vector>
 #include <iterator> // std::forward_iterator_tag
 #include <memory>
+#include <iostream>
+
 
 template <typename T>
-class matrix
+class MatrixTranspose : public Matrix<T> {
+	public:
+
+	virtual T &operator()(unsigned row, unsigned column) {
+		return Matrix<T>::pter->operator[](column * Matrix<T>::rows + row);
+	}
+
+
+	virtual const T &operator()(unsigned row, unsigned column) const {
+		return Matrix<T>::pter->operator[](column * Matrix<T>::rows + row);
+	}
+
+	//index_col_iterator<T> begin() {return column_iterator(*this, 0, 0);}
+	//index_col_iterator<T> end() {return column_iterator(*this, 0, Matrix<T>::columns);}
+
+	MatrixTranspose() : Matrix<T>(){}
+
+	MatrixTranspose(const unsigned rws, const unsigned cols,const std::shared_ptr<std::vector<T>> ptr){
+		Matrix<T>::rows = cols;
+		Matrix<T>::columns = rws;
+		Matrix<T>::pter = ptr; 
+	}
+};
+
+template <typename T>
+class SubMatrix : public Matrix<T> {
+	public:
+	virtual T &operator()(unsigned row, unsigned column) {
+			return Matrix<T>::pter->operator[]((srow + row) * (Matrix<T>::columns + scol) + (scol + column));
+				
+	}
+
+
+	virtual const T &operator()(unsigned row, unsigned column) const {
+			return Matrix<T>::pter->operator[]((srow + row) * (Matrix<T>::columns+ scol) + (scol + column));
+	}
+
+	
+	SubMatrix() : Matrix<T>(){}
+
+	
+	SubMatrix(const unsigned starting_row, const unsigned ending_row, const unsigned starting_col, const unsigned ending_col, const std::shared_ptr<std::vector<T>> ptr){
+		Matrix<T>::rows = (ending_row - starting_row);
+		Matrix<T>::columns = (ending_col - starting_col);
+		scol = starting_col;
+		srow = starting_row;
+		Matrix<T>::pter = ptr; 
+	}
+
+	private:
+		unsigned srow, scol;
+};
+
+template <typename T>
+class Matrix
 {
   public:
-	typedef unsigned int size_c;
-	typedef unsigned int size_r;
 	typedef T type;
 	typedef typename std::vector<T>::iterator iterator;
 	typedef typename std::vector<T>::const_iterator const_iterator;
@@ -24,10 +78,10 @@ class matrix
 	typedef const_index_col_iterator<T> const_column_iterator;
 
 	//DEFAULT CONSTRUCTOR
-	matrix() : columns(0), rows(0), pter(nullptr){}
+	Matrix() : columns(0), rows(0), pter(nullptr){}
 
-	//CONSTRUCTOR WHICH CONSTRUCT A MATRIX FILLED WITH ZEROES ON CREATION
-	explicit matrix(const size_r rws , const size_c cols)  {
+	//CONSTRUCTOR WHICH CONSTRUCT A Matrix FILLED WITH ZEROES ON CREATION
+	explicit Matrix(const unsigned rws , const unsigned cols)  {
 		columns = cols;
 		rows = rws;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
@@ -35,8 +89,8 @@ class matrix
 			c = type();
 	}
 
-	//CONSTRUCTOR WHICH CONSTRUCT A MATRIX FILLED WITH A DEFAULT VALUE ON CREATION
-	explicit matrix(const size_r rws, const size_c cols, const type &val) {
+	//CONSTRUCTOR WHICH CONSTRUCT A Matrix FILLED WITH A DEFAULT VALUE ON CREATION
+	explicit Matrix(const unsigned rws, const unsigned cols, const type &val) {
 		columns = cols;
 		rows = rws;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
@@ -44,75 +98,82 @@ class matrix
 			pter->operator[](i) = val;
 	}
 	
+	
 
 	//COPY CONSTRUCTOR
-	matrix(const matrix<type> &other){
+	Matrix(const Matrix<type> &other){
 		columns = other.getColumns();
 		rows = other.getRows();
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = other.pter->operator[](i);
-		std::cout << "COPY CONSTRUCTOR FIGAAAAAAA" <<std::endl;
+		std::cout << "COPY CONSTRUCTOR INVOKED" <<std::endl;
 	}
 
 	//MOVE COSTRUCTOR
-	matrix(const matrix<T> &&other) : 
-			columns(0), rows(0), pter(nullptr){
+	Matrix(Matrix<T> &&other) : columns(0), rows(0), pter(nullptr){
+		std::cout << "MOVE CONSTUCTOR INVOKED" <<std::endl;
 		pter = other.pter;	//maybe private method to do this
 		other.pter = nullptr; //same problem as above, but maybe with same class type there is no need
 	}
 
+	//MOVE ASSIGNMENT OPERATOR
+	Matrix &operator=(Matrix<type> &&other) {
+		std::cout<<"MOVE ASSIGNMENT INVOKED" << std::endl;
+		pter = other.pter;	//maybe private method to do this
+		other.pter = nullptr; //same problem as above
+	}
+
 	//ASSIGNMENT OPERATOR
-	matrix &operator=(const matrix<type> &other){
+	Matrix &operator=(const Matrix<type> &other){
+		std::cout<<"NORMAL ASSIGNMENT INVOKED" << std::endl;
 		if (this != &other){
-			matrix<T> tmp(other);
+			Matrix<T> tmp(other);
 			this->swap(tmp);
 		}
 		return *this;
 	}
 
 	//SWAP METHOD FOR ASSIGNMENT OPERATOR
-	void swap(matrix<T> &other) {
+	void swap(Matrix<T> &other) {
 		std::swap(other.pter, this->pter);
 		std::swap(other.columns, this->columns);
 		std::swap(other.rows, this->rows);
 	}
 
-	//MOVE ASSIGNMENT OPERATOR
-	matrix &operator=(const matrix<type> &&other) {
-		pter = other.pter;	//maybe private method to do this
-		other.pter = nullptr; //same problem as above
-	}
+	
 
 	//OPERATOR () TO DIRECTLY ACCESS THE ELEMENTS
-	type &operator()(unsigned row, unsigned column) {
+	virtual type &operator()(unsigned row, unsigned column) {
 		return pter->operator[](row *columns + column);
 	}
 
 
-	const type &operator()(unsigned row, unsigned column) const {
+	virtual const type &operator()(unsigned row, unsigned column) const {
 		return pter->operator[](row * columns + column);
 	}
 
-	//SUBMATRIX METHOD
-	matrix<type> submatrix() const {
+	//SUBMatrix METHOD
+	SubMatrix<type> subMatrix(const unsigned srow, const unsigned scold, const unsigned erow,const unsigned ecold) {
+		return SubMatrix<type>(srow, erow, scold, ecold, pter);
 	}
 
 	//TRANSPOSE METHOD
-	matrix<type> transpose() const {
+	MatrixTranspose<type> transpose() const{
+		return MatrixTranspose<type>(rows, columns, pter);
 	}
-	//DIAGONAL METHOD(MUST RETURN A VECTOR WITH ELEMENT = TO DIAGONAL OF THE MATRIX)
-	matrix<type> diagonal() const {
+	//DIAGONAL METHOD(MUST RETURN A VECTOR WITH ELEMENT = TO DIAGONAL OF THE Matrix)
+	Matrix<type> diagonal() const {
 	}
 
 	//DESTRUCTOR
-	~matrix(){
+	~Matrix(){
 		columns = 0;
 		rows = 0;
 		std::vector<type>().swap(*pter);
 	}
-	//DIAGONAL MATRIX METHOD(MUST BE USED ONLY BY VECTOR CLASS AND IT RETURNS A DIAGONAL MATRIX WHOSE ELEMENTS BELONGS TO THE VECTOR )
-	const matrix<type> diagonalmatrix() const {
+	//DIAGONAL Matrix METHOD(MUST BE USED ONLY BY VECTOR CLASS AND IT RETURNS A DIAGONAL Matrix WHOSE ELEMENTS BELONGS TO THE VECTOR )
+	const Matrix<type> diagonalMatrix() const {
 	}
 
 	//GET METHOD FOR ROWS PARAMETER
@@ -126,31 +187,33 @@ class matrix
 	}
 
 	//ALL THE FUCKING ITERATORS
-	iterator begin() { return pter->begin(); }
-	iterator end() { return pter->end(); }
-	const_iterator begin() const { return pter->begin(); }
-	const_iterator end() const { return pter->end(); }
+	virtual iterator begin() { return pter->begin();}
 
-	row_iterator row_begin(unsigned i) { return pter->begin() + (i * columns); }   //mi sa che sto scrivendo cose a caso
-	row_iterator row_end(unsigned i) { return pter->begin() + (i + 1) * columns; } //non scrivo codice da anni
-	const_row_iterator row_begin(unsigned i) const { return pter->begin() + (i * columns); }
-	const_row_iterator row_end(unsigned i) const { return pter->begin() + (i + 1) * columns; }
+	virtual iterator end() { return pter->end(); }
+	virtual const_iterator begin() const { return pter->begin(); }
+	virtual const_iterator end() const { return pter->end(); }
 
-	column_iterator col_begin(unsigned i) { return column_iterator(*this, 0, i); }
-	column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i + 1); } //questa potrebbe andare come no, il tempo ce lo dirà
-	const_column_iterator col_begin(unsigned i) const { return column_iterator(*this, 0, i); }
-	const_column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i + 1); } //idem come sopra
+	virtual row_iterator row_begin(unsigned i) { return pter->begin() + (i * columns); }   //mi sa che sto scrivendo cose a caso
+	virtual row_iterator row_end(unsigned i) { return pter->begin() + (i + 1) * columns; } //non scrivo codice da anni
+	virtual const_row_iterator row_begin(unsigned i) const { return pter->begin() + (i * columns); }
+	virtual const_row_iterator row_end(unsigned i) const { return pter->begin() + (i + 1) * columns; }
+
+	virtual column_iterator col_begin(unsigned i) { return column_iterator(*this, 0, i); }
+	virtual column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i + 1); } //questa potrebbe andare come no, il tempo ce lo dirà
+	//virtual const_column_iterator col_begin(unsigned i) const { return column_iterator(*this, 0, i); }
+	//virtual const_column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i + 1); } //idem come sopra
 
 	//KILL ME PLEASE , OKAY
+  protected:
 
-  private:
   	std::shared_ptr<std::vector<type>> pter;
 	unsigned columns, rows;
 };
 
+
 //OVERLOAD OSTREAM OPERATOR
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const matrix<T> &ma){
+std::ostream &operator<<(std::ostream &os, const Matrix<T> &ma){
 	for (unsigned r = 0; r < ma.getRows(); r++){
 		for (unsigned c = 0; c < ma.getColumns(); c++){
 			os << "[" << ma(r, c) << "] ";
@@ -159,5 +222,6 @@ std::ostream &operator<<(std::ostream &os, const matrix<T> &ma){
 	}
 	return os;
 }
+
 
 #endif

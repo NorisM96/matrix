@@ -1,16 +1,16 @@
 
-#include <iostream>
 #include "matrix.h"
 
+
 int main() {
-    matrix<int> A(4, 5), B(A);
+    Matrix<int> A(4, 5), B(A);
     std::cout << A;
     std::cout << "COPYYYYYYYY" << std::endl;
     std::cout << B;
-    matrix<int> C(4,5,6);
+    Matrix<int> C(4,5,6);
     std::cout << "GUARDA MAMMA COL SEI DIOCANEEEEEEE" << std::endl;
     std::cout << C;
-    matrix<int> D(C);
+    Matrix<int> D(C);
     std::cout << "COPYYYYYYYYO ANCHE QUELLA COL 6, DIO VENTISEI" << std::endl;
     std::cout << D;
 
@@ -63,9 +63,30 @@ int main() {
             i=0;
             rowa++;
         }
-        std::cout << *iter << " ";
+        std::cout << *iter << " " ;
         i++;
         
     }
-    
+
+    std::cout   << "Check transpose method" <<   std::endl;
+    auto R = C.transpose();
+    std::cout << R;
+    C(1,2) = 5;
+    std::cout<<"POSIZIONE 1,2 MATRICE NORMALE = 5" << std::endl;
+    std::cout<<"STAMPO MATRICE NORMALE" << std::endl;
+    std::cout << C;
+    std::cout<<"STAMPO MATRICE TRASPOSTA" << std::endl;
+    std::cout << R;
+    R(1,2) = 3;
+    std::cout<<"POSIZIONE 1,2 MATRICE TRASPOSTA = 3" << std::endl;
+    std::cout<<"STAMPO MATRICE NORMALE" << std::endl;
+    std::cout << C;
+    std::cout<<"STAMPO MATRICE TRASPOSTA" << std::endl;
+    std::cout << R;
+    std::cout<<"TEST SOTTOMATRICE" << std::endl;
+    auto S = C.subMatrix(1,1,4,5);
+    std::cout<< "MATRICE SUB" << std::endl;
+    std::cout << S;
+    std::cout<< "MATRICE NORMALE" <<std::endl;
+    std::cout << C;
 }
