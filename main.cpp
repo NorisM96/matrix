@@ -68,6 +68,27 @@ int main() {
         
     }
 
+    std::cout << "\n\n\n" << std::endl;
+
+    std::cout << D << std::endl;
+
+    std::cout << "\n\n\n" << std::endl;
+
+    auto E = D.transpose();
+    std::cout << E << std::endl;
+
+    auto F = E.transpose();
+    std::cout << "\n\n\n" << std::endl;
+    std::cout << F << std::endl;
+
+    auto G = F.subMatrix(1,1,3,3);
+    std::cout << "\n\n\n" << std::endl;
+
+    std::cout << G;
+
+    
+
+    /*
     std::cout   << "Check transpose method" <<   std::endl;
     auto R = C.transpose();
     std::cout << R;
@@ -101,5 +122,6 @@ int main() {
     std::cout << G;
     std::cout << S;
     std::cout << C;
-    std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl;   
+    std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl; 
+    */  
 }
