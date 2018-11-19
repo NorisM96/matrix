@@ -11,34 +11,6 @@
 
 
 template <typename T>
-class MatrixTranspose : public Matrix<T> {
-	public:
-
-	virtual T &operator()(unsigned row, unsigned column) {
-		return Matrix<T>::pter->operator[]((column + Matrix<T>::scolumn) * (Matrix<T>::rows + Matrix<T>::srow) + (row + Matrix<T>::srow));
-	}
-
-
-	virtual const T &operator()(unsigned row, unsigned column) const {
-		return Matrix<T>::pter->operator[]((column + Matrix<T>::scolumn) * (Matrix<T>::rows + Matrix<T>::srow) + (row + Matrix<T>::srow));
-	}
-
-	//index_col_iterator<T> begin() {return column_iterator(*this, 0, 0);}
-	//index_col_iterator<T> end() {return column_iterator(*this, 0, Matrix<T>::columns);}
-
-	MatrixTranspose() : Matrix<T>(){}
-
-	MatrixTranspose(const unsigned rws, const unsigned cols,const unsigned scol, const unsigned srw, const std::shared_ptr<std::vector<T>> ptr){
-		Matrix<T>::rows = cols;
-		Matrix<T>::columns = rws;
-		Matrix<T>::pter = ptr;
-		Matrix<T>::srow = scol;
-		Matrix<T>::scolumn = srw;
-	}
-
-};
-
-template <typename T>
 class Matrix
 {
   public:
@@ -60,6 +32,7 @@ class Matrix
 		rows = rws;
 		srow = 0;
 		scolumn = 0;
+		transp = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (type c : *pter)
 			c = type();
@@ -71,6 +44,7 @@ class Matrix
 		rows = rws;
 		srow = 0;
 		scolumn = 0;
+		transp = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = val;
@@ -84,6 +58,7 @@ class Matrix
 		rows = other.rows;
 		srow = other.srow;
 		scolumn = other.scolumn;
+		transp = other.transp;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = other.pter->operator[](i);
@@ -108,6 +83,7 @@ class Matrix
 		rows = other.rows;
 		srow = other.srow;
 		scolumn = other.scolumn;
+		transp = other.transp;
 		pter = other.pter;	//maybe private method to do this
 		other.pter = nullptr; //same problem as above
 	}
@@ -130,18 +106,25 @@ class Matrix
 		std::swap(other.pter, this->pter);
 		std::swap(other.scolumn, this->scolumn);
 		std::swap(other.srow, this->srow);
+		std::swap(other.transp, this->transp);
 	}
 
 	
 
 	//OPERATOR () TO DIRECTLY ACCESS THE ELEMENTS
-	virtual type &operator()(unsigned row, unsigned column) {
-		return pter->operator[]((row+srow) * (columns +scolumn) + (column + scolumn));
+	type &operator()(unsigned row, unsigned column) {
+		if(!transp)
+			return pter->operator[]((row+srow) * (columns +scolumn) + (column + scolumn));
+		else
+			return pter->operator[]((column + scolumn) * (rows + srow) + (row + srow));
 	}
 
 
-	virtual const type &operator()(unsigned row, unsigned column) const {
-		return pter->operator[]((row+srow) * (columns +scolumn) + (column + scolumn));
+	const type &operator()(unsigned row, unsigned column) const {
+		if(!transp)
+			return pter->operator[]((row+srow) * (columns +scolumn) + (column + scolumn));
+		else
+			return pter->operator[]((column + scolumn) * (rows + srow) + (row + srow));
 	}
 
 	//SUBMatrix METHOD
@@ -150,8 +133,8 @@ class Matrix
 	}
 
 	//TRANSPOSE METHOD
-	virtual MatrixTranspose<type> transpose() const{
-		return MatrixTranspose<type>(rows, columns, scolumn, srow, pter);
+	Matrix transpose() const{
+		return Matrix<type>(srow, scolumn, rows, columns, transp, pter);
 	}
 	//DIAGONAL METHOD(MUST RETURN A VECTOR WITH ELEMENT = TO DIAGONAL OF THE Matrix)
 	Matrix<type> diagonal() const {
@@ -178,19 +161,18 @@ class Matrix
 	}
 
 	//ALL THE FUCKING ITERATORS
-	virtual iterator begin() { return pter->begin();}
+	iterator begin() { return pter->begin();}
+	iterator end() { return pter->end(); }
+	const_iterator begin() const { return pter->begin(); }
+	const_iterator end() const { return pter->end(); }
 
-	virtual iterator end() { return pter->end(); }
-	virtual const_iterator begin() const { return pter->begin(); }
-	virtual const_iterator end() const { return pter->end(); }
+	row_iterator row_begin(unsigned i) { return pter->begin() + (i * columns); }   //mi sa che sto scrivendo cose a caso
+	row_iterator row_end(unsigned i) { return pter->begin() + (i + 1) * columns; } //non scrivo codice da anni
+	const_row_iterator row_begin(unsigned i) const { return pter->begin() + (i * columns); }
+	const_row_iterator row_end(unsigned i) const { return pter->begin() + (i + 1) * columns; }
 
-	virtual row_iterator row_begin(unsigned i) { return pter->begin() + (i * columns); }   //mi sa che sto scrivendo cose a caso
-	virtual row_iterator row_end(unsigned i) { return pter->begin() + (i + 1) * columns; } //non scrivo codice da anni
-	virtual const_row_iterator row_begin(unsigned i) const { return pter->begin() + (i * columns); }
-	virtual const_row_iterator row_end(unsigned i) const { return pter->begin() + (i + 1) * columns; }
-
-	virtual column_iterator col_begin(unsigned i) { return column_iterator(*this, 0, i); }
-	virtual column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i + 1); } //questa potrebbe andare come no, il tempo ce lo dirà
+	column_iterator col_begin(unsigned i) { return column_iterator(*this, 0, i); }
+	column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i + 1); } //questa potrebbe andare come no, il tempo ce lo dirà
 	//virtual const_column_iterator col_begin(unsigned i) const { return column_iterator(*this, 0, i); }
 	//virtual const_column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i + 1); } //idem come sopra
 
@@ -205,7 +187,18 @@ class Matrix
 		columns = ecol - scl;
 	}
 
+	Matrix(const unsigned srw, const unsigned scl, const unsigned rws, const unsigned clms , const bool trsp, const std::shared_ptr<std::vector<type>> ptr){
+		pter = ptr;
+		srow = scl;
+		scolumn = srw;
+		rows = clms;
+		columns = rws;
+		transp = !(trsp);
+	}
+
+
   	std::shared_ptr<std::vector<type>> pter;
+	bool transp;
 	unsigned columns, rows, srow, scolumn;
 };
 

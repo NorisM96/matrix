@@ -83,6 +83,9 @@ int main() {
     std::cout << C;
     std::cout<<"STAMPO MATRICE TRASPOSTA" << std::endl;
     std::cout << R;
+    auto H = R.transpose();
+    std::cout<<"STAMPO MATRICE TRASPOSTA TRANSPOSTA DIO CANTASTICO" << std::endl;
+    std::cout << H;
     std::cout<<"TEST SOTTOMATRICE" << std::endl;
     auto S = C.subMatrix(1,1,4,5);
     std::cout<< "MATRICE NORMALE" <<std::endl;
@@ -98,5 +101,5 @@ int main() {
     std::cout << G;
     std::cout << S;
     std::cout << C;
-    std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl    
+    std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl;   
 }
