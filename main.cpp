@@ -91,7 +91,7 @@ int main() {
 
     std::cout << G;
 
-    std::cout << "\n\n\nPROVADIOVCAIRN\n";
+    std::cout << "matrice dritta\n";
 
     Matrix<int> FF (4,5);
 
@@ -102,21 +102,22 @@ int main() {
     }
     std::cout << FF << std::endl;
 
-    std::cout << "sub\n\n\n" << std::endl;
+    std::cout << "trans"<< std::endl;
 
     auto LL =  FF.transpose() ;
 
-    std::cout << LL;
+    std::cout << LL << std::endl;
 
-    auto GG = FF.subMatrix(0,1,3,3);
+    std::cout << " sub\n" << std::endl;
 
-    std::cout << GG;
+    auto GG = LL.subMatrix(0,1,3,3);
 
-    auto DIOCANEEEEEEE = GG.transpose();
+    std::cout << GG << "\n";
 
-    std::cout << "\n\n\n" <<DIOCANEEEEEEE << std::endl;
+    auto DI = GG.transpose();
 
-    std::cout << FF.transpose();
+    std::cout << "trasposta\n" <<DI << std::endl;
+
 }
 
     
