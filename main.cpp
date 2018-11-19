@@ -81,14 +81,23 @@ int main() {
     std::cout << "\n\n\n" << std::endl;
     std::cout << F << std::endl;
 
-    auto G = F.subMatrix(1,1,3,3);
+    Matrix<int> I(5, 5);
+    auto V = I.subMatrix(1, 1, 3, 3);
+    auto W = V.transpose();
+    auto K = W.subMatrix(1, 0, 2, 1);
+    auto L = K.transpose();
+    W(1,1) = 1;
+    std::cout << "SOTTOMATRICE DA 1 A 3" << std::endl;
     std::cout << "\n\n\n" << std::endl;
-
-    std::cout << G;
-
+    std::cout << V;
+    std::cout << "TRANSPOSTA MATRICE PRIMA" << std::endl;
+    std::cout << W;
+    std::cout << "SOTTOMATRICE DELLA TRANSPOSTA DI PRIMA" << std::endl;
+    std::cout << K;
+    std::cout << "TRASPOSTA SOTTOMATRICE DELLA TRANSPOSTA DI PRIMA" << std::endl;
+    std::cout << L;
     
-
-    /*
+    
     std::cout   << "Check transpose method" <<   std::endl;
     auto R = C.transpose();
     std::cout << R;
@@ -108,20 +117,20 @@ int main() {
     std::cout<<"STAMPO MATRICE TRASPOSTA TRANSPOSTA DIO CANTASTICO" << std::endl;
     std::cout << H;
     std::cout<<"TEST SOTTOMATRICE" << std::endl;
-    auto S = C.subMatrix(1,1,4,5);
+    auto S = C.subMatrix(1,1,3,4);
     std::cout<< "MATRICE NORMALE" <<std::endl;
     std::cout << C;
     std::cout<< "MATRICE SUB" << std::endl;
     std::cout << S;
-    auto G = S.transpose();
+    auto J = S.transpose();
     std::cout<< "MATRICE TRANSPOSTA" << std::endl;
-    std::cout << G;
+    std::cout << J;
     std::cout<< "PROVO A CAMBIARE UN ELEMENTO, DOVREBBE MODIFICARE TUTTE LE MATRICI" << std::endl;
-    G(0, 0) = 0;
+    J(0, 0) = 0;
     std::cout<<"TUTTE LE MATRICI DOVREBBERO AVERE UNO ZERO" << std::endl;
-    std::cout << G;
+    std::cout << J;
     std::cout << S;
     std::cout << C;
     std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl; 
-    */  
+   
 }
