@@ -24,14 +24,18 @@ class Matrix
 	typedef const_index_col_iterator<T> const_column_iterator;
 
 	//DEFAULT CONSTRUCTOR
-	Matrix() : columns(0), rows(0), srow(0), scolumn(0), pter(nullptr){}
+	Matrix() : columns(0), rows(0), start_row(0), start_column(0), end_row(0), end_column(0), transp(false), pter(nullptr){}
 
 	//CONSTRUCTOR WHICH CONSTRUCT A Matrix FILLED WITH ZEROES ON CREATION
-	explicit Matrix(const unsigned rws , const unsigned cols)  {
-		columns = cols;
-		rows = rws;
-		srow = 0;
-		scolumn = 0;
+	explicit Matrix(const unsigned rows , const unsigned columns)  {
+		this->columns = columns;
+		this->rows = rows;
+		effective_rows = rows;
+		effective_columns = columns;
+		start_row = 0;
+		start_column = 0;
+		end_row = rows-1;
+		end_column = columns-1;
 		transp = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (type c : *pter)
@@ -39,11 +43,15 @@ class Matrix
 	}
 
 	//CONSTRUCTOR WHICH CONSTRUCT A Matrix FILLED WITH A DEFAULT VALUE ON CREATION
-	explicit Matrix(const unsigned rws, const unsigned cols, const type &val) {
-		columns = cols;
-		rows = rws;
-		srow = 0;
-		scolumn = 0;
+	explicit Matrix(const unsigned rows, const unsigned columns, const type &val) {
+		this->columns = columns;
+		this->rows = rows;
+		effective_rows = rows;
+		effective_columns = columns;
+		start_row = 0;
+		start_column = 0;
+		end_row = rows-1;
+		end_column = columns-1;
 		transp = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
@@ -56,8 +64,12 @@ class Matrix
 	Matrix(const Matrix<type> &other){
 		columns = other.columns;
 		rows = other.rows;
-		srow = other.srow;
-		scolumn = other.scolumn;
+		effective_rows = other.effective_rows;
+		effective_columns = other.effective_columns;
+		start_row = other.start_row;
+		start_column = other.start_column;
+		end_row = other.end_row;
+		end_column = other.end_column;
 		transp = other.transp;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
@@ -70,8 +82,12 @@ class Matrix
 		std::cout << "MOVE CONSTUCTOR INVOKED" <<std::endl;
 		columns = other.columns;
 		rows = other.rows;
-		srow = other.srow;
-		scolumn = other.scolumn;
+		effective_rows = other.effective_rows;
+		effective_columns = other.effective_columns;
+		start_row = other.start_row;
+		start_column = other.start_column;
+		end_row = other.end_row;
+		end_column = other.end_column;
 		pter = other.pter;	//maybe private method to do this
 		other.pter = nullptr; //same problem as above, but maybe with same class type there is no need
 	}
@@ -81,8 +97,12 @@ class Matrix
 		std::cout<<"MOVE ASSIGNMENT INVOKED" << std::endl;
 		columns = other.columns;
 		rows = other.rows;
-		srow = other.srow;
-		scolumn = other.scolumn;
+		effective_rows = other.effective_rows;
+		effective_columns = other.effective_columns;
+		start_row = other.start_row;
+		start_column = other.start_column;
+		end_row = other.end_row;
+		end_column = other.end_column;
 		transp = other.transp;
 		pter = other.pter;	//maybe private method to do this
 		other.pter = nullptr; //same problem as above
@@ -103,9 +123,13 @@ class Matrix
 		std::swap(other.pter, this->pter);
 		std::swap(other.columns, this->columns);
 		std::swap(other.rows, this->rows);
+		std::swap(other.effective_columns, this->effective_columns);
+		std::swap(other.effective_rows, this->effective_rows);
 		std::swap(other.pter, this->pter);
-		std::swap(other.scolumn, this->scolumn);
-		std::swap(other.srow, this->srow);
+		std::swap(other.start_column, this->start_column);
+		std::swap(other.start_row, this->start_row);
+		std::swap(other.end_column, this->end_column);
+		std::swap(other.end_row, this->end_row);
 		std::swap(other.transp, this->transp);
 	}
 
@@ -114,27 +138,38 @@ class Matrix
 	//OPERATOR () TO DIRECTLY ACCESS THE ELEMENTS
 	type &operator()(unsigned row, unsigned column) {
 		if(!transp)
-			return pter->operator[]((row+srow) * (columns +scolumn) + (column + scolumn));
+			return pter->operator[](((row + start_row) * columns)+ column + start_column);
 		else
-			return pter->operator[]((column + scolumn) * (rows + srow) + (row + srow));
+			return pter->operator[]((column + start_column) * (rows) + (row + start_row));
 	}
 
 
 	const type &operator()(unsigned row, unsigned column) const {
 		if(!transp)
-			return pter->operator[]((row+srow) * (columns +scolumn) + (column + scolumn));
+			return pter->operator[]((row+start_row) * (columns) + column + start_column);
 		else
-			return pter->operator[]((column + scolumn) * (rows + srow) + (row + srow));
+			return pter->operator[]((column + start_column) * (rows) + (row + start_row));
 	}
 
-	//SUBMatrix METHOD
-	Matrix subMatrix(const unsigned srow, const unsigned scold, const unsigned erow,const unsigned ecold) {
-		return Matrix<type>(srow, erow, scold, ecold, pter);
+	//subMatrix METHOD
+	Matrix subMatrix(const unsigned start_row, const unsigned start_column, const unsigned end_row,const unsigned end_column) {
+		const unsigned new_eff_rows = end_row - start_row + 1;
+		const unsigned new_eff_columns = end_column - start_column + 1;
+
+		return Matrix<type>(rows, columns, new_eff_rows, new_eff_columns, start_row, start_column, end_row, end_column, transp, pter);
 	}
 
 	//TRANSPOSE METHOD
 	Matrix transpose() const{
-		return Matrix<type>(srow, scolumn, rows, columns, transp, pter);
+		const unsigned new_rows = effective_columns;
+		const unsigned new_columns = effective_rows;
+		const unsigned new_start_row = start_column;
+		const unsigned new_start_column = start_row;
+		const unsigned new_end_row = end_column;
+		const unsigned new_end_column = end_row;
+		const bool new_transp = !transp; 
+
+		return Matrix<type>(columns, rows, new_rows, new_columns, new_start_row, new_start_column, new_end_row, new_end_column, new_transp, pter);
 	}
 	//DIAGONAL METHOD(MUST RETURN A VECTOR WITH ELEMENT = TO DIAGONAL OF THE Matrix)
 	Matrix<type> diagonal() const {
@@ -152,12 +187,12 @@ class Matrix
 
 	//GET METHOD FOR ROWS PARAMETER
 	unsigned getRows() const {
-		return rows;
+		return effective_rows;
 	}
 
 	//GET METHOD FOR COLUMNS PARAMETER
 	unsigned getColumns() const {
-		return columns;
+		return effective_columns;
 	}
 
 	//ALL THE FUCKING ITERATORS
@@ -179,14 +214,18 @@ class Matrix
 	//KILL ME PLEASE , OKAY
   protected:
 
-	Matrix(const unsigned srw, const unsigned erow, const unsigned scl, const unsigned ecol , const std::shared_ptr<std::vector<type>> ptr){
-		pter = ptr;
-		srow = srw;
-		scolumn = scl;
-		rows = erow - srw;
-		columns = ecol - scl;
+	Matrix(const unsigned rows, const unsigned columns, const unsigned eff_rows, const unsigned eff_columns, const unsigned start_row, const unsigned start_column, const unsigned end_row, const unsigned end_column, const bool transp, const std::shared_ptr<std::vector<type>> pter){
+		this->rows = rows;
+		this->columns = columns;
+		this->effective_rows = eff_rows;
+		this->effective_columns = eff_columns;
+		this->start_row = start_row;
+		this->start_column = start_column;
+		this->transp = transp;
+		this->pter = pter;
 	}
 
+	/*
 	Matrix(const unsigned srw, const unsigned scl, const unsigned rws, const unsigned clms , const bool trsp, const std::shared_ptr<std::vector<type>> ptr){
 		pter = ptr;
 		srow = scl;
@@ -195,11 +234,13 @@ class Matrix
 		columns = rws;
 		transp = !(trsp);
 	}
+	*/
 
 
   	std::shared_ptr<std::vector<type>> pter;
 	bool transp;
-	unsigned columns, rows, srow, scolumn;
+	unsigned columns, rows;
+	unsigned start_row, start_column, end_row, end_column, effective_rows, effective_columns;
 };
 
 

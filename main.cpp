@@ -1,4 +1,5 @@
 
+
 #include "matrix.h"
 
 
@@ -68,6 +69,10 @@ int main() {
         
     }
 
+    auto S = D.subMatrix(2,1,3,4);
+    std::cout << "\n\n" << S;
+    
+
     std::cout << "\n\n\n" << std::endl;
 
     std::cout << D << std::endl;
@@ -85,6 +90,34 @@ int main() {
     std::cout << "\n\n\n" << std::endl;
 
     std::cout << G;
+
+    std::cout << "\n\n\nPROVADIOVCAIRN\n";
+
+    Matrix<int> FF (4,5);
+
+    for(int r = 0; r != 4; r++){
+        for(int c = 0; c != 5; c++){
+            FF(r, c) = r + c;
+        }
+    }
+    std::cout << FF << std::endl;
+
+    std::cout << "sub\n\n\n" << std::endl;
+
+    auto LL =  FF.transpose() ;
+
+    std::cout << LL;
+
+    auto GG = FF.subMatrix(0,1,3,3);
+
+    std::cout << GG;
+
+    auto DIOCANEEEEEEE = GG.transpose();
+
+    std::cout << "\n\n\n" <<DIOCANEEEEEEE << std::endl;
+
+    std::cout << FF.transpose();
+}
 
     
 
@@ -124,4 +157,4 @@ int main() {
     std::cout << C;
     std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl; 
     */  
-}
+
