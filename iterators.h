@@ -33,9 +33,6 @@ class index_col_iterator {
 	index_col_iterator(Matrix<T> &m, unsigned r, unsigned c) : 
 			mat(m), row(r), column(c) {}
 
-	index_col_iterator(MatrixTranspose<T> &m, unsigned r, unsigned c) : 
-			mat(m), row(r), column(c) {}
-
     private:
 	Matrix<T>& mat;
 	unsigned row, column;    
