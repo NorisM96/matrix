@@ -17,8 +17,9 @@ class Matrix
 	typedef T type;
 	typedef typename std::vector<T>::iterator iterator;
 	typedef typename std::vector<T>::const_iterator const_iterator;
-	typedef typename std::vector<T>::iterator row_iterator;
-	typedef typename std::vector<T>::const_iterator const_row_iterator;
+
+	typedef index_row_iterator<T> row_iterator;
+	typedef const_index_row_iterator<T> const_row_iterator;
 
 	typedef index_col_iterator<T> column_iterator;
 	typedef const_index_col_iterator<T> const_column_iterator;
@@ -206,22 +207,33 @@ class Matrix
 		return effective_columns;
 	}
 
-	//ALL THE FUCKING ITERATORS
+	//iterators that start from the beginning of the vector and iterate on it
 	iterator begin() { return pter->begin();}
 	iterator end() { return pter->end(); }
 	const_iterator begin() const { return pter->begin(); }
 	const_iterator end() const { return pter->end(); }
 
-	row_iterator row_begin(unsigned i) { return pter->begin() + (i * columns); }   //mi sa che sto scrivendo cose a caso
-	row_iterator row_end(unsigned i) { return pter->begin() + (i + 1) * columns; } //non scrivo codice da anni
-	const_row_iterator row_begin(unsigned i) const { return pter->begin() + (i * columns); }
-	const_row_iterator row_end(unsigned i) const { return pter->begin() + (i + 1) * columns; }
+	//iterators that start from the beginning of the matrix and iterate on the whole 
+	//matrix by rows
+	row_iterator row_begin(unsigned i) { return row_iterator(*this, i, 0); }   
+	row_iterator row_end(unsigned i) { return row_iterator(*this, i + 1, 0); } 
+	const_row_iterator row_begin(unsigned i) const { return row_iterator(*this, i, 0); }
+	const_row_iterator row_end(unsigned i) const { return row_iterator(*this, i + 1, 0); }
 
+	//iterators that iterate on a single or multiple columns 
+	row_iterator row_begin() { return row_iterator(*this, 0, 0); }   
+	row_iterator row_end() { return row_iterator(*this, effective_rows, 0); } 
+	const_row_iterator row_begin() const { return row_iterator(*this, 0, 0); }
+	const_row_iterator row_end() const { return row_iterator(*this, effective_rows, 0); }
+
+	//iterators that iterate on a single or multiple columns 
 	column_iterator col_begin(unsigned i) { return column_iterator(*this, 0, i); }
 	column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i + 1); } //questa potrebbe andare come no, il tempo ce lo dirà
 	const_column_iterator col_begin(unsigned i) const { return column_iterator(*this, 0, i); }
 	column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i + 1); }
 	
+	//iterators that start from the beginning of the matrix and iterate on the whole 
+	//matrix by columns
 	column_iterator col_begin() {return column_iterator(*this, 0, 0); }
 	column_iterator col_end() {return column_iterator(*this, 0, effective_columns); }
 	const_column_iterator col_begin() const {return column_iterator(*this, 0, 0); }

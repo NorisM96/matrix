@@ -54,7 +54,7 @@ int main() {
 
     i= 0;
     int rowa = 1;
-    //prova iteratore riga
+    /*prova iteratore riga
     std::cout << "PROVA ITERATORE RIGA: " << std::endl;
     for(auto iter = D.row_begin(0); iter != D.row_end(3); ++iter){
         if(i == 5 || i == 0){
@@ -66,6 +66,7 @@ int main() {
         i++;
         
     }
+    */
 
     auto S = D.subMatrix(2,1,3,4);
     std::cout << "\n\n" << S;
@@ -131,19 +132,32 @@ int main() {
     std::cout<< "DIO SMANDRAPPINO CANE " << DG3 << std::endl;
 
     
-    std::cout << "LL(trans & sub)\n" << GG << std::endl;
+    std::cout << "LL(trans & sub)\n" << FF << std::endl;
 
     i = 0;
     col = 1;
-    for(auto iter = GG.col_begin(); iter != GG.col_end(); ++iter){
-        if(i == 4 || i == 0){
-            std::cout << "\nColonna " << col << ": ";
-            i=0;
-            col++;
-        }
+    for(auto iter = FF.col_begin(1); iter != FF.col_end(1); ++iter){
+        
         std::cout << *iter << " ";
-        i++;
-    }   
+        
+    }
+
+    
+    std::cout << "\n\n"; 
+
+    
+     i = 0;
+    col = 1;
+    for(auto iter = FF.row_begin(); iter != FF.row_end(); ++iter){
+        
+        std::cout << *iter << " ";
+        
+    }
+
+    std::cout << "\n\n";  
+    
+
+    std::cout << *(FF.row_begin(0));  
 }
 
     
