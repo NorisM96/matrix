@@ -130,10 +130,20 @@ int main() {
     auto DG3 = DG2.transpose();
     std::cout<< "DIO SMANDRAPPINO CANE " << DG3;
 
+    auto DG6 = DG2.diagonalMatrix();
+    std::cout << DG6;
+
+    Matrix<int> VE1(5,1,3), VE2(1,5,3);
+    std::cout << "Vettore\n" << VE1;
+    auto DGMV = VE1.diagonalMatrix();
+    std::cout << "Covettore\n" << VE2;
+    auto DGMV2 = VE2.diagonalMatrix();
+    std::cout << "DIAGMATRIX Vettore\n "<<DGMV; 
+    std::cout << "DIAGMATRIX Covettore\n" << DGMV2;
+    
+
    
 }
-
-    
 
     /*
     std::cout   << "Check transpose method" <<   std::endl;

@@ -34,6 +34,7 @@ class Matrix
 		effective_columns = columns;
 		start_row = 0;
 		start_column = 0;
+		diagmatr = false;
 		transp = false;
 		diag = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
@@ -51,6 +52,7 @@ class Matrix
 		start_column = 0;
 		transp = false;
 		diag = false;
+		diagmatr = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = val;
@@ -68,6 +70,7 @@ class Matrix
 		start_column = other.start_column;
 		transp = other.transp;
 		diag = other.diag;
+		diagmatr = other.diagmatr;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = other.pter->operator[](i);
@@ -125,6 +128,7 @@ class Matrix
 		std::swap(other.start_row, this->start_row);
 		std::swap(other.transp, this->transp);
 		std::swap(other.transp, this->diag);
+		std::swap(other.diagmatr, this->diagmatr);
 	}
 
 	
@@ -147,7 +151,17 @@ class Matrix
 
 
 	const type &operator()(unsigned row, unsigned column) const {
-		if((diag == true) && !(transp)){
+		if(diagmatr == true){
+			if(row != column)
+				return zero;
+			else{
+				if(from_diag)
+					return pter->operator[]((row + start_row) * (columns) + (row + start_column));
+				else
+					return pter->operator[](row + start_row);  // STO ROBO DEVE ANDARE ANCHE PER LE SOTTOMATRICI, NON CI HO GUARDATO STASERA CI GUARDO DOMANI MI AMMAZZO CIAO
+			}
+		}
+		else if((diag == true) && !(transp)){
 			assert(column == 0);
 			return pter->operator[]((row + start_row) * (columns) + (row + start_column));
 		}
@@ -185,16 +199,23 @@ class Matrix
 			return Matrix<type>(columns, rows, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
 	}
 
+	//DIAGONAL Matrix METHOD(MUST BE USED ONLY BY VECTOR CLASS AND IT RETURNS A DIAGONAL Matrix WHOSE ELEMENTS BELONGS TO THE VECTOR )
+	const Matrix<type> diagonalMatrix() const {
+		assert(effective_columns == 1 || effective_rows == 1);
+		return Matrix<type>(*this, true, diag);
+	}
+
 	//DESTRUCTOR
 	~Matrix(){
 		columns = 0;
 		rows = 0;
+		start_row = 0;
+		start_column = 0;
+		effective_columns = 0;
+		effective_rows = 0;
 		std::vector<type>().swap(*pter);
 	}
-	//DIAGONAL Matrix METHOD(MUST BE USED ONLY BY VECTOR CLASS AND IT RETURNS A DIAGONAL Matrix WHOSE ELEMENTS BELONGS TO THE VECTOR )
-	const Matrix<type> diagonalMatrix() const {
-		
-	}
+	
 
 	//GET METHOD FOR ROWS PARAMETER
 	unsigned getRows() const {
@@ -235,13 +256,30 @@ class Matrix
 		this->transp = transp;
 		this->diag = diag;
 		this->pter = pter;
+		this->diagmatr = false;
+		this->from_diag = false;
+	}
+
+	Matrix(const Matrix<type> &vec, const bool diagmatr, const bool from_diag){
+		this->diagmatr = diagmatr;
+		rows = vec.rows;
+		columns = vec.columns;
+		effective_rows = std::max(vec.effective_rows, vec.effective_columns);
+		effective_columns = std::max(vec.effective_rows, vec.effective_columns);
+		transp = false;
+		diag = false;
+		start_row = vec.start_row;
+		start_column = vec.start_column;
+		pter = vec.pter;
+		this->from_diag = from_diag;
 	}
 
 
   	std::shared_ptr<std::vector<type>> pter;
-	bool transp, diag;
+	bool transp, diag, diagmatr, from_diag;
 	unsigned columns, rows;
 	unsigned start_row, start_column, effective_rows, effective_columns;
+	const type zero = type();
 };
 
 
