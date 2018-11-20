@@ -219,11 +219,16 @@ class Matrix
 
 	column_iterator col_begin(unsigned i) { return column_iterator(*this, 0, i); }
 	column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i + 1); } //questa potrebbe andare come no, il tempo ce lo dirà
-	//virtual const_column_iterator col_begin(unsigned i) const { return column_iterator(*this, 0, i); }
-	//vipter->operator[]((column + start_column) * (rows) + (column + start_column));rtual const_column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i + 1); } //idem come sopra
-
+	const_column_iterator col_begin(unsigned i) const { return column_iterator(*this, 0, i); }
+	column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i + 1); }
+	
+	column_iterator col_begin() {return column_iterator(*this, 0, 0); }
+	column_iterator col_end() {return column_iterator(*this, 0, effective_columns); }
+	const_column_iterator col_begin() const {return column_iterator(*this, 0, 0); }
+	const_column_iterator col_end() const {return column_iterator(*this, 0, effective_columns); }
+	
 	//KILL ME PLEASE , OKAY
-  protected:
+    protected:
 
 	Matrix(const unsigned rows, const unsigned columns, const unsigned eff_rows, const unsigned eff_columns, const unsigned start_row, const unsigned start_column, const bool transp, const bool diag, const std::shared_ptr<std::vector<type>> pter){
 		this->rows = rows;

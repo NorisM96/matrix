@@ -128,9 +128,22 @@ int main() {
     std::cout << "Diagonally su transposta \n" << DG2;
 
     auto DG3 = DG2.transpose();
-    std::cout<< "DIO SMANDRAPPINO CANE " << DG3;
+    std::cout<< "DIO SMANDRAPPINO CANE " << DG3 << std::endl;
 
-   
+    
+    std::cout << "LL(trans & sub)\n" << GG << std::endl;
+
+    i = 0;
+    col = 1;
+    for(auto iter = GG.col_begin(); iter != GG.col_end(); ++iter){
+        if(i == 4 || i == 0){
+            std::cout << "\nColonna " << col << ": ";
+            i=0;
+            col++;
+        }
+        std::cout << *iter << " ";
+        i++;
+    }   
 }
 
     
