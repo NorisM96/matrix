@@ -116,7 +116,7 @@ int main() {
 
     std::cout << "trasposta\n" <<DI << std::endl;
 
-    auto DG = DI.diagonal();
+    auto DG = GG.diagonal();
 
     std::cout <<"Diagonalley\n" << DG;
 
@@ -124,7 +124,12 @@ int main() {
     std::cout <<"Diagonalley al contrario\n" << DGT;
 
     auto DG2 = LL.diagonal();
-    std::cout << "Diagonally2 \n" << DG2; 
+    std::cout << LL;
+    std::cout << "Diagonally su transposta \n" << DG2;
+
+    auto DG3 = DG2.transpose();
+    std::cout<< "DIO SMANDRAPPINO CANE " << DG3;
+
    
 }
 

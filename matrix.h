@@ -152,7 +152,6 @@ class Matrix
 			return pter->operator[]((row + start_row) * (columns) + (row + start_column));
 		}
 		else if((diag == true) && (transp == true)){
-			assert(row == 0);
 			return pter->operator[]((column + start_column) * (rows) + column + start_row);
 		}
 		else if((!diag && (transp == true)))
@@ -179,8 +178,11 @@ class Matrix
 		return Matrix<type>(columns, rows, new_rows, new_columns, new_start_row, new_start_column, new_transp,diag, pter);
 	}
 	//DIAGONAL METHOD(MUST RETURN A VECTOR WITH ELEMENT = TO DIAGONAL OF THE Matrix)
-	Matrix<type> diagonal() const {
-			return Matrix(rows, columns, effective_rows, 1, start_row, start_column , transp, true, pter);
+	Matrix diagonal() const {
+		if(!transp)
+			return Matrix<type>(rows, columns, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
+		else
+			return Matrix<type>(columns, rows, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
 	}
 
 	//DESTRUCTOR
