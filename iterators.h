@@ -74,41 +74,41 @@ class const_index_col_iterator {
 };
 
 
-/*
+
 template<typename T>
 class index_row_iterator {
 	
     public:
 	
 	
-	index_col_iterator& operator ++() {
-		++row;
-		if (row == mat.getRows()) {
-			row = 0;
-			++col;
-		}#include<iterator>
+	index_row_iterator& operator ++() {
+		++col;
+		if (col == mat.getColumns()) {
+			col = 0;
+			++row;
+		}
 
 		return *this;
 	}
 	
-	T& operator *() {
+	const T& operator *() {
 		return mat(row, col);
 	}
 	
-	bool operator == (const index_col_iterator& rhs) const {
+	bool operator == (const index_row_iterator& rhs) const {
 		return row == rhs.row && col == rhs.col;
 	}
-	bool operator != (const index_col_iterator& rhs) const {
+	bool operator != (const index_row_iterator& rhs) const {
 		return row != rhs.row || col != rhs.col;
 	}
 	
 	
-	index_row_iterator(Matrix<T> &mat, unsigned r, unsigned c) : 
-			mtrx(mat), row_pos(r), col_pos(c) {}
+	index_row_iterator(Matrix<T> &m, unsigned r, unsigned c) : 
+			mat(m), row(r), col(c) {}
 
     private:
-	const Matrix<T>& mtrx;
-	unsigned row_pos, col_pos;    
+	const Matrix<T>& mat;
+	unsigned row, col;    
 };
 
 template<typename T>
@@ -117,12 +117,12 @@ class const_index_row_iterator {
     public:
 	
 	
-	index_col_iterator& operator ++() {
-		++row;
-		if (row == mat.getRows()) {
-			row = 0;
-			++col;
-		}#include<iterator>
+	const_index_row_iterator& operator ++() {
+		++col;
+		if (col == mat.getColumns()) {
+			col = 0;
+			++row;
+		}
 
 		return *this;
 	}
@@ -131,21 +131,21 @@ class const_index_row_iterator {
 		return mat(row, col);
 	}
 	
-	bool operator == (const index_col_iterator& rhs) const {
+	bool operator == (const const_index_row_iterator& rhs) const {
 		return row == rhs.row && col == rhs.col;
 	}
-	bool operator != (const index_col_iterator& rhs) const {
+	bool operator != (const const_index_row_iterator& rhs) const {
 		return row != rhs.row || col != rhs.col;
 	}
 	
 	
-	const_index_row_iterator(const Matrix<T> &mat, unsigned r, unsigned c) : 
-			mtrx(mat), row_pos(r), col_pos(c) {}
+	const_index_row_iterator(const Matrix<T> &m, unsigned r, unsigned c) : 
+			mat(m), row(r), col(c) {}
 
     private:
-	const Matrix<T>& mtrx;
-	unsigned row_pos, col_pos;    
+	const Matrix<T>& mat;
+	unsigned row, col;    
 };
-*/
+
 
 #endif

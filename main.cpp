@@ -67,6 +67,8 @@ int main() {
         
     }
 
+    std::cout << "\nMATRICE CON OSTREAM \n"<< D;
+
     auto S = D.subMatrix(2,1,3,4);
     std::cout << "\n\n" << S;
     
@@ -128,11 +130,11 @@ int main() {
     std::cout << "Diagonally su transposta \n" << DG2;
 
     auto DG3 = DG2.transpose();
-    std::cout<< "DIO SMANDRAPPINO CANE " << DG3;
+    std::cout<< "DIO SMANDRAPPINO CANE " << DG3 << std::endl;
 
     auto DG6 = DG2.diagonalMatrix();
     std::cout << DG6;
-/*
+
     Matrix<int> VE1(5,1,3), VE2(1,5,3);
     std::cout << "Vettore\n" << VE1;
     auto DGMV = VE1.diagonalMatrix();
@@ -164,21 +166,20 @@ int main() {
     std::cout<<"STAMPO MATRICE TRASPOSTA TRANSPOSTA DIO CANTASTICO" << std::endl;
     std::cout << H;
     std::cout<<"TEST SOTTOMATRICE" << std::endl;
-    auto S = C.subMatrix(1,1,4,5);
+    auto SC = C.subMatrix(1,1,3,4);
     std::cout<< "MATRICE NORMALE" <<std::endl;
     std::cout << C;
     std::cout<< "MATRICE SUB" << std::endl;
-    std::cout << S;
-    auto G = S.transpose();
+    std::cout << SC;
+    auto GS = SC.transpose();
     std::cout<< "MATRICE TRANSPOSTA" << std::endl;
-    std::cout << G;
+    std::cout << GS;
     std::cout<< "PROVO A CAMBIARE UN ELEMENTO, DOVREBBE MODIFICARE TUTTE LE MATRICI" << std::endl;
-    G(0, 0) = 0;
+    GS(0, 0) = 0;
     std::cout<<"TUTTE LE MATRICI DOVREBBERO AVERE UNO ZERO" << std::endl;
-    std::cout << G;
-    std::cout << S;
+    std::cout << GS;
+    std::cout << SC;
     std::cout << C;
     std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl; 
 
-    */
 }

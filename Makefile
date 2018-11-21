@@ -10,3 +10,6 @@ main.o: main.cpp
 
 clean:
 	rm *.exe *.o
+
+clang:
+	clang++ -std=c++11 -stdlib=libc++ main.cpp -o main.exe && ./main.exe
