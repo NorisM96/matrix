@@ -3,6 +3,16 @@
 
 #include"matrix_forward.h"
 
+/**
+@file iterators.h
+@brief Declaration and definition of the iterators needed to iterate in any given order(row or column) over a Matrix object
+**/
+
+/**
+@class index_col_iterator
+@brief Template class which implements the column order iterator for the Matrix object
+
+**/
 template<typename T>
 class index_col_iterator {
 	
@@ -38,6 +48,11 @@ class index_col_iterator {
 	unsigned row, column;    
 };
 
+/**
+@class const_index_col_iterator
+@brief Template class which implements the column order const_iterator for the Matrix object
+
+**/
 template<typename T>
 class const_index_col_iterator {
 	
@@ -74,7 +89,10 @@ class const_index_col_iterator {
 };
 
 
-
+/**
+@class index_row_iterator
+@brief Template class which implements the row order iterator for the Matrix object
+**/
 template<typename T>
 class index_row_iterator {
 	
@@ -111,6 +129,11 @@ class index_row_iterator {
 	unsigned row, col;    
 };
 
+/**
+@class const_index_row_iterator
+@brief Template class which implements the row order const_iterator for the Matrix object
+
+**/
 template<typename T>
 class const_index_row_iterator {
 	
