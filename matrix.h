@@ -98,7 +98,6 @@ class Matrix
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = other.pter->operator[](i);
-		std::cout << "COPY CONSTRUCTOR INVOKED" <<std::endl;
 	}
 
 	/**
