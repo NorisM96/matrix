@@ -158,7 +158,7 @@ class Matrix
 				if(from_diag)
 					return pter->operator[]((row + start_row) * (columns) + (row + start_column));
 				else
-					return pter->operator[](row + start_row);  // STO ROBO DEVE ANDARE ANCHE PER LE SOTTOMATRICI, NON CI HO GUARDATO STASERA CI GUARDO DOMANI MI AMMAZZO CIAO
+					return pter->operator[](row + (start_row * columns + start_column));
 			}
 		}
 		else if((diag == true) && !(transp)){
@@ -178,7 +178,7 @@ class Matrix
 	Matrix subMatrix(const unsigned start_row, const unsigned start_column, const unsigned end_row,const unsigned end_column) {
 		const unsigned new_eff_rows = end_row - start_row + 1;
 		const unsigned new_eff_columns = end_column - start_column + 1;
-		return Matrix<type>(rows, columns, new_eff_rows, new_eff_columns, start_row, start_column, transp, diag, pter);
+		return Matrix<type>(rows, columns, new_eff_rows, new_eff_columns, (this->start_row + start_row) ,(this->start_column + start_column), transp, diag, pter);
 	}
 
 	//TRANSPOSE METHOD

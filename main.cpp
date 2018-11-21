@@ -140,12 +140,11 @@ int main() {
     auto DGMV2 = VE2.diagonalMatrix();
     std::cout << "DIAGMATRIX Vettore\n "<<DGMV; 
     std::cout << "DIAGMATRIX Covettore\n" << DGMV2;
-    
-
-   
-}
-
-    /*
+    std::cout << "SOTTOMATRICE DI PARTENZA\n" << GG;
+    auto SMD = GG.subMatrix(0, 0, 3, 0);
+    std::cout << "SOTTOMATRICE VETTORE\n" << SMD;
+    auto DMVS = SMD.diagonalMatrix();
+    std::cout << "DIAGONALMATRIX DI UN VETTORE SOTTOMATRICE\n" <<DMVS;   
     std::cout   << "Check transpose method" <<   std::endl;
     auto R = C.transpose();
     std::cout << R;
@@ -180,4 +179,4 @@ int main() {
     std::cout << S;
     std::cout << C;
     std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl; 
-    */  
+}
