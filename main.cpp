@@ -132,7 +132,7 @@ int main() {
 
     auto DG6 = DG2.diagonalMatrix();
     std::cout << DG6;
-
+/*
     Matrix<int> VE1(5,1,3), VE2(1,5,3);
     std::cout << "Vettore\n" << VE1;
     auto DGMV = VE1.diagonalMatrix();
@@ -179,4 +179,6 @@ int main() {
     std::cout << S;
     std::cout << C;
     std::cout << "NON CENE DI NEGRI IN ITALIA CON MATRICI FUNXIONANTI" << std::endl; 
+
+    */
 }
