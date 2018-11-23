@@ -99,17 +99,12 @@ class Matrix
 		diagmatr = false;
 		from_diag = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
-<<<<<<< HEAD
 		int i = 0;
 		for(const_row_iterator iter = other.row_begin(); iter != other.row_end(); ++iter){
 			pter->operator[](i) = *iter;
 			i++;
 		}
 		std::cout << "COPY CONSTRUCTOR INVOKED" <<std::endl;
-=======
-		for (unsigned i = 0; i < (columns * rows); i++)
-			pter->operator[](i) = other.pter->operator[](i);
->>>>>>> 5a4c0ff88a0ef649cb8a10c3229d532de651f350
 	}
 
 	/**
