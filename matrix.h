@@ -19,8 +19,7 @@
 @brief A template class that implements a 2D matrix with some matrix operation which return other Matrix objects with the same shared memory
 **/
 template <typename T>
-class Matrix
-{
+class matrix {
   public:
 	typedef T type;
 	typedef typename std::vector<T>::iterator iterator;
@@ -36,13 +35,13 @@ class Matrix
   	@brief Default Constructor (Must have)
   	Used when creating an Empty matrix(Useful to array constructors) 
   	**/
-	Matrix() : columns(0), rows(0), start_row(0), start_column(0), transp(false), pter(nullptr), diag(false), diagmatr(false), from_diag(false){}
+	matrix() : columns(0), rows(0), start_row(0), start_column(0), transp(false), pter(nullptr), diag(false), diagmatr(false), from_diag(false){}
 
 	/**
  	 @brief Optional Constructor
   	 Used for creating a matrix of a certain dimension, filled with zero values(Default constructor of type T)
   	**/
-	explicit Matrix(const unsigned rows , const unsigned columns)  {
+	explicit matrix(const unsigned rows , const unsigned columns)  {
 		this->columns = columns;
 		this->rows = rows;
 		effective_rows = rows;
@@ -63,9 +62,9 @@ class Matrix
   	 Used for creating a matrix of a certain dimension, filled with a value val
 	@param rows number of rows of the matrix
   	@param columns number of columns of the matrix
-	@param val value to fill the Matrix
+	@param val value to fill the matrix
   	**/
-	explicit Matrix(const unsigned rows, const unsigned columns, const type &val) {
+	explicit matrix(const unsigned rows, const unsigned columns, const type &val) {
 		this->columns = columns;
 		this->rows = rows;
 		effective_rows = rows;
@@ -84,10 +83,10 @@ class Matrix
 
 	/**
  	 @brief Copy Constructor (MUST HAVE)
-  	 It creates a deep copy of a given Matrix
-	@param other lvalue reference to a Matrix
+  	 It creates a deep copy of a given matrix
+	@param other lvalue reference to a matrix
   	**/
-	Matrix(const Matrix<type> &other){
+	matrix(const matrix<type> &other){
 		columns = other.columns;
 		rows = other.rows;
 		effective_rows = other.effective_rows;
@@ -109,10 +108,10 @@ class Matrix
 
 	/**
  	 @brief Move Constructor (MUST HAVE)
-  	 It "moves" the content of a Matrix into another(Never called in this project thanks to RVO)
-	@param other rvalue reference to a Matrix
+  	 It "moves" the content of a matrix into another(Never called in this project thanks to RVO)
+	@param other rvalue reference to a matrix
   	**/
-	Matrix(Matrix<T> &&other){
+	matrix(matrix<T> &&other){
 		std::cout << "MOVE CONSTUCTOR INVOKED" << std::endl;
 		columns = other.columns;
 		rows = other.rows;
@@ -129,10 +128,10 @@ class Matrix
 
 	/**
  	 @brief Move Assignment (MUST HAVE)
-  	 It "moves" the content of a Matrix rhs into the left side of the assignment(Never called in this thanks to RVO)
-	@param other rvalue reference to the rhs Matrix
+  	 It "moves" the content of a matrix rhs into the left side of the assignment(Never called in this thanks to RVO)
+	@param other rvalue reference to the rhs matrix
   	**/
-	Matrix<type> &operator=(Matrix<type> &&other) {
+	matrix<type> &operator=(matrix<type> &&other) {
 		std::cout<<"MOVE ASSIGNMENT INVOKED" << std::endl;
 		columns = other.columns;
 		rows = other.rows;
@@ -150,13 +149,13 @@ class Matrix
 
 	/**
  	 @brief Assignment Operator (MUST HAVE)
-  	 It creates a deep copy of a the rhs Matrix
-	@param other lvalue reference to the rhs Matrix
+  	 It creates a deep copy of a the rhs matrix
+	@param other lvalue reference to the rhs matrix
   	**/
-	Matrix &operator=(const Matrix<type> &other){
+	matrix &operator=(const matrix<type> &other){
 		std::cout<<"NORMAL ASSIGNMENT INVOKED" << std::endl;
 		if (this != &other){
-			Matrix<T> tmp(other);
+			matrix<T> tmp(other);
 			this->swap(tmp);
 		}
 		return *this;
@@ -164,10 +163,10 @@ class Matrix
 
 	/**
  	 @brief Swap method (MUST HAVE)
-  	 It swaps method from a Matrix to another
-	@param other lvalue reference to a Matrix
+  	 It swaps method from a matrix to another
+	@param other lvalue reference to a matrix
   	**/
-	void swap(Matrix<T> &other) {
+	void swap(matrix<T> &other) {
 		std::swap(other.pter, this->pter);
 		std::swap(other.columns, this->columns);
 		std::swap(other.rows, this->rows);
@@ -211,7 +210,7 @@ class Matrix
 
 	/**
  	@brief const Operator() (MUST HAVE)
-	Same as operator(), but the elements extracted with this can only be read and a diagonal Matrix(which is always const by the way) must always use this.
+	Same as operator(), but the elements extracted with this can only be read and a diagonal matrix(which is always const by the way) must always use this.
 	@param row row of the element that needs to be taken
 	@param column column of the element that needs to be taken
 	@return const lvalue reference of the retrieved element
@@ -241,104 +240,104 @@ class Matrix
 	}
 
 	/**
- 	@brief subMatrix method (REQUESTED)
+ 	@brief submatrix method (REQUESTED)
 	It returns a submatrix of the matrix which called the method(using a protected constructor).
 	@param start_row index of the row from which the submatrix starts
 	@param start_column index of the column from which the submatrix starts
 	@param end_row index of the row to which the submatrix ends
 	@param end_column index of the column to which the submatrix ends
-	@return a Matrix which is a logical subMatrix of the calling one 
+	@return a matrix which is a logical submatrix of the calling one 
   	**/
-	Matrix subMatrix(const unsigned start_row, const unsigned start_column, const unsigned end_row,const unsigned end_column) {
+	matrix subMatrix(const unsigned start_row, const unsigned start_column, const unsigned end_row,const unsigned end_column) {
 		const unsigned new_eff_rows = end_row - start_row + 1;
 		const unsigned new_eff_columns = end_column - start_column + 1;
-		return  Matrix<type>(rows, columns, new_eff_rows, new_eff_columns, (this->start_row + start_row) ,(this->start_column + start_column), transp, diag, pter);
+		return  matrix<type>(rows, columns, new_eff_rows, new_eff_columns, (this->start_row + start_row) ,(this->start_column + start_column), transp, diag, pter);
 	}
 
 	/**
- 	@brief subMatrix const method (REQUESTED)
+ 	@brief submatrix const method (REQUESTED)
 	It returns a const submatrix of the const matrix which called the method(using a protected constructor) w.
 	@param start_row index of the row from which the submatrix starts
 	@param start_column index of the column from which the submatrix starts
 	@param end_row index of the row to which the submatrix ends
 	@param end_column index of the column to which the submatrix ends
-	@return a Matrix which is a logical subMatrix of the calling one 
+	@return a matrix which is a logical submatrix of the calling one 
   	**/
-	const Matrix subMatrix(const unsigned start_row, const unsigned start_column, const unsigned end_row,const unsigned end_column) const{
+	const matrix subMatrix(const unsigned start_row, const unsigned start_column, const unsigned end_row,const unsigned end_column) const{
 		const unsigned new_eff_rows = end_row - start_row + 1;
 		const unsigned new_eff_columns = end_column - start_column + 1;
-		return Matrix<type>(rows, columns, new_eff_rows, new_eff_columns, (this->start_row + start_row) ,(this->start_column + start_column), transp, diag, pter);
+		return matrix<type>(rows, columns, new_eff_rows, new_eff_columns, (this->start_row + start_row) ,(this->start_column + start_column), transp, diag, pter);
 	}
 
 	/**
  	@brief transpose method (REQUESTED)
 	It returns a transpose matrix of the matrix which called the method(using a protected constructor).
-	@return a Matrix which is a logical tranpose Matrix of the calling one  
+	@return a matrix which is a logical tranpose matrix of the calling one  
   	**/
-	Matrix transpose(){
+	matrix transpose(){
 		const unsigned new_rows = effective_columns;
 		const unsigned new_columns = effective_rows;
 		const unsigned new_start_row = start_column;
 		const unsigned new_start_column = start_row;
 		const bool new_transp = !transp; 
 
-		return Matrix<type>(columns, rows, new_rows, new_columns, new_start_row, new_start_column, new_transp,diag, pter);
+		return matrix<type>(columns, rows, new_rows, new_columns, new_start_row, new_start_column, new_transp,diag, pter);
 	}
 
 	/**
  	@brief transpose const method (REQUESTED)
 	It returns a const transpose matrix of the matrix which called the method(using a protected constructor).
-	@return a Matrix which is a logical tranpose Matrix of the calling one  
+	@return a matrix which is a logical tranpose matrix of the calling one  
   	**/
-	const Matrix transpose() const{
+	const matrix transpose() const{
 		const unsigned new_rows = effective_columns;
 		const unsigned new_columns = effective_rows;
 		const unsigned new_start_row = start_column;
 		const unsigned new_start_column = start_row;
 		const bool new_transp = !transp; 
 
-		return Matrix<type>(columns, rows, new_rows, new_columns, new_start_row, new_start_column, new_transp,diag, pter);
+		return matrix<type>(columns, rows, new_rows, new_columns, new_start_row, new_start_column, new_transp,diag, pter);
 	}
 	
 	/**
  	@brief diagonal method (REQUESTED)
-	It returns a "logical" extracted vector which corresponds to the diagonal of the calling Matrix.
-	@return a Matrix which is a logical built diagonal vector of the starting matrix  
+	It returns a "logical" extracted vector which corresponds to the diagonal of the calling matrix.
+	@return a matrix which is a logical built diagonal vector of the starting matrix  
   	**/
-	Matrix diagonal(){
+	matrix diagonal(){
 		if(!transp)
-			return Matrix<type>(rows, columns, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
+			return matrix<type>(rows, columns, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
 		else
-			return Matrix<type>(columns, rows, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
+			return matrix<type>(columns, rows, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
 	}
 
 	/**
  	@brief diagonal const method (REQUESTED)
-	It returns a "logical" extracted const vector which corresponds to the diagonal of the calling Matrix.
-	@return a Matrix which is a logical built diagonal vector of the starting matrix  
+	It returns a "logical" extracted const vector which corresponds to the diagonal of the calling matrix.
+	@return a matrix which is a logical built diagonal vector of the starting matrix  
   	**/
-	const Matrix diagonal() const{
+	const matrix diagonal() const{
 		if(!transp)
-			return Matrix<type>(rows, columns, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
+			return matrix<type>(rows, columns, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
 		else
-			return Matrix<type>(columns, rows, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
+			return matrix<type>(columns, rows, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
 	}
 
 	/**
- 	@brief diagonalMatrix method (REQUESTED)
-	It returns a "logical" const diagonal Matrix from the calling Matrix(which is a vector or covector).
-	@return a Matrix which is a logical built diagonal matrix of the starting vector/covector 
+ 	@brief diagonalmatrix method (REQUESTED)
+	It returns a "logical" const diagonal matrix from the calling matrix(which is a vector or covector).
+	@return a matrix which is a logical built diagonal matrix of the starting vector/covector 
   	**/
-	const Matrix<type> diagonalMatrix() const {
+	const matrix<type> diagonalMatrix() const {
 		assert(effective_columns == 1 || effective_rows == 1);
-		return Matrix<type>(*this, true, diag);
+		return matrix<type>(*this, true, diag);
 	}
 
 	/**
  	@brief Destructor(MUST HAVE)
-	When a Matrix object goes out of scope, this is automatically called, freeing the memory occupied by that same Matrix. 
+	When a matrix object goes out of scope, this is automatically called, freeing the memory occupied by that same matrix. 
   	**/
-	~Matrix(){
+	~matrix(){
 		columns = 0;
 		rows = 0;
 		start_row = 0;
@@ -429,29 +428,29 @@ class Matrix
 
 	/**
  	@brief row_begin method
-	Returns the first iterator used to iterate over the current considered Matrix by rows
-	@return iterator to the first element of the current Matrix
+	Returns the first iterator used to iterate over the current considered matrix by rows
+	@return iterator to the first element of the current matrix
   	**/
 	row_iterator row_begin() { return row_iterator(*this, 0, 0); }   
 	
 	/**
  	@brief row_end method
-	Returns the last iterator used to iterate over the current considered Matrix by rows
-	@return iterator to the end(logic) of the current Matrix
+	Returns the last iterator used to iterate over the current considered matrix by rows
+	@return iterator to the end(logic) of the current matrix
   	**/
 	row_iterator row_end() { return row_iterator(*this, effective_rows, 0); } 
 	
 	/**
  	@brief row_begin const method
-	Returns the first iterator used to iterate over the current considered Matrix by rows, but the element pointed cannot be modified(const)
-	@return const_row_iterator to the first element of the current Matrix
+	Returns the first iterator used to iterate over the current considered matrix by rows, but the element pointed cannot be modified(const)
+	@return const_row_iterator to the first element of the current matrix
   	**/
 	const_row_iterator row_begin() const { return const_row_iterator(*this, 0, 0); }
 	
 	/**
  	@brief row_end const method
-	Returns the last iterator used to iterate over the current considered Matrix by rows, but the element pointed cannot be modified(const)
-	@return const_row_iterator that represent the logic end of the current Matrix
+	Returns the last iterator used to iterate over the current considered matrix by rows, but the element pointed cannot be modified(const)
+	@return const_row_iterator that represent the logic end of the current matrix
   	**/
 	const_row_iterator row_end() const { return const_row_iterator(*this, effective_rows, 0); }
 
@@ -489,36 +488,36 @@ class Matrix
 	
 	/**
  	@brief col_begin method
-	Returns the first iterator to the first element of current Matrix, used to iterate by column 
-	@return column_iterator of the first element of the current Matrix
+	Returns the first iterator to the first element of current matrix, used to iterate by column 
+	@return column_iterator of the first element of the current matrix
   	**/
 	column_iterator col_begin() {return column_iterator(*this, 0, 0); }
 	
 	/**
  	@brief col_end method
-	Returns the iterator to the end  of current Matrix, used to iterate by column 
-	@return column_iterator of the logic end of the current Matrix
+	Returns the iterator to the end  of current matrix, used to iterate by column 
+	@return column_iterator of the logic end of the current matrix
   	**/
 	column_iterator col_end() {return column_iterator(*this, 0, effective_columns); }
 	
 	/**
  	@brief col_begin const method
-	Returns the first iterator to the first element of current Matrix, used to iterate by column, that cannot modify the elements
-	@return const_column_iterator of the first element of the current Matrix
+	Returns the first iterator to the first element of current matrix, used to iterate by column, that cannot modify the elements
+	@return const_column_iterator of the first element of the current matrix
   	**/
 	const_column_iterator col_begin() const {return const_column_iterator(*this, 0, 0); }
 	
 	/**
  	@brief col_end const method
-	Returns the last iterator current Matrix, used to iterate by column
-	@return const_column_iterator of logic end of the current Matrix
+	Returns the last iterator current matrix, used to iterate by column
+	@return const_column_iterator of logic end of the current matrix
   	**/
 	const_column_iterator col_end() const {return const_column_iterator(*this, 0, effective_columns); }
 	
     protected:
 
 	//Constructor used by matrix operation transpose,submatrix and diagonal
-	Matrix(const unsigned rows, const unsigned columns, const unsigned eff_rows, const unsigned eff_columns, const unsigned start_row, const unsigned start_column, const bool transp, const bool diag, const std::shared_ptr<std::vector<type>> pter){
+	matrix(const unsigned rows, const unsigned columns, const unsigned eff_rows, const unsigned eff_columns, const unsigned start_row, const unsigned start_column, const bool transp, const bool diag, const std::shared_ptr<std::vector<type>> pter){
 		this->rows = rows;
 		this->columns = columns;
 		this->effective_rows = eff_rows;
@@ -532,8 +531,8 @@ class Matrix
 		this->from_diag = false;
 	}
 
-	//Constructor used by matrix operation diagonalMatrix
-	Matrix(const Matrix<type> &vec, const bool diagmatr, const bool from_diag){
+	//Constructor used by matrix operation diagonalmatrix
+	matrix(const matrix<type> &vec, const bool diagmatr, const bool from_diag){
 		this->diagmatr = diagmatr;
 		rows = vec.rows;
 		columns = vec.columns;
@@ -549,22 +548,22 @@ class Matrix
 
 
   	std::shared_ptr<std::vector<type>> pter; //shared_ptr to share the memory between the object
-	bool transp, diag, diagmatr, from_diag; //Flags to identify the type of Matrix the instance represents
-	unsigned columns, rows;  //Rows and column of the WHOLE matrix(not eventually modified by submatrix/diagonal method but by diagonalMatrix and transpose of course yes)
+	bool transp, diag, diagmatr, from_diag; //Flags to identify the type of matrix the instance represents
+	unsigned columns, rows;  //Rows and column of the WHOLE matrix(not eventually modified by submatrix/diagonal method but by diagonalmatrix and transpose of course yes)
 	unsigned start_row, start_column, effective_rows, effective_columns; //Parameters needed to define the current submatrix dimension
-	const type zero = type(); //Logic zero that has to be returned when accessing a non-diagonal element in a diagonal Matrix
+	const type zero = type(); //Logic zero that has to be returned when accessing a non-diagonal element in a diagonal matrix
 };
 
 
 /**
-Overload of stream operator that permits printing a Matrix object
+Overload of stream operator that permits printing a matrix object
 
 @param os output stream
-@param ma Matrix to stamp
+@param ma matrix to stamp
 @return lvalue reference to output stream
 */
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const Matrix<T> &ma){
+std::ostream &operator<<(std::ostream &os, const matrix<T> &ma){
 	for (unsigned r = 0; r < ma.getRows(); r++){
 		for (unsigned c = 0; c < ma.getColumns(); c++){
 			os << "[" << ma(r, c) << "] ";

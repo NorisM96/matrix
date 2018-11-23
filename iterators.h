@@ -5,12 +5,12 @@
 
 /**
 @file iterators.h
-@brief Declaration and definition of the iterators needed to iterate in any given order(row or column) over a Matrix object
+@brief Declaration and definition of the iterators needed to iterate in any given order(row or column) over a matrix object
 **/
 
 /**
 @class index_col_iterator
-@brief Template class which implements the column order iterator for the Matrix object
+@brief Template class which implements the column order iterator for the matrix object
 
 **/
 template<typename T>
@@ -40,17 +40,17 @@ class index_col_iterator {
 		return row != other.row || column != other.column;
 	}
 	
-	index_col_iterator(Matrix<T> &m, unsigned r, unsigned c) : 
+	index_col_iterator(matrix<T> &m, unsigned r, unsigned c) : 
 			mat(m), row(r), column(c) {}
 
     private:
-	Matrix<T>& mat;
+	matrix<T>& mat;
 	unsigned row, column;    
 };
 
 /**
 @class const_index_col_iterator
-@brief Template class which implements the column order const_iterator for the Matrix object
+@brief Template class which implements the column order const_iterator for the matrix object
 
 **/
 template<typename T>
@@ -80,18 +80,18 @@ class const_index_col_iterator {
 		return row != other.row || column != other.column;
 	}
 	
-	const_index_col_iterator(const Matrix<T> &m, unsigned r, unsigned c) : 
+	const_index_col_iterator(const matrix<T> &m, unsigned r, unsigned c) : 
 			mat(m), row(r), column(c) {}
 
     private:
-	const Matrix<T>& mat;
+	const matrix<T>& mat;
 	unsigned row, column;    
 };
 
 
 /**
 @class index_row_iterator
-@brief Template class which implements the row order iterator for the Matrix object
+@brief Template class which implements the row order iterator for the matrix object
 **/
 template<typename T>
 class index_row_iterator {
@@ -121,17 +121,17 @@ class index_row_iterator {
 	}
 	
 	
-	index_row_iterator(Matrix<T> &m, unsigned r, unsigned c) : 
+	index_row_iterator(matrix<T> &m, unsigned r, unsigned c) : 
 			mat(m), row(r), col(c) {}
 
     private:
-	const Matrix<T>& mat;
+	matrix<T>& mat;
 	unsigned row, col;    
 };
 
 /**
 @class const_index_row_iterator
-@brief Template class which implements the row order const_iterator for the Matrix object
+@brief Template class which implements the row order const_iterator for the matrix object
 
 **/
 template<typename T>
@@ -162,11 +162,11 @@ class const_index_row_iterator {
 	}
 	
 	
-	const_index_row_iterator(const Matrix<T> &m, unsigned r, unsigned c) : 
+	const_index_row_iterator(const matrix<T> &m, unsigned r, unsigned c) : 
 			mat(m), row(r), col(c) {}
 
     private:
-	const Matrix<T>& mat;
+	const matrix<T>& mat;
 	unsigned row, col;    
 };
 
