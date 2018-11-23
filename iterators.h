@@ -109,7 +109,7 @@ class index_row_iterator {
 		return *this;
 	}
 	
-	const T& operator *() {
+	T& operator *() {
 		return mat(row, col);
 	}
 	
@@ -150,7 +150,7 @@ class const_index_row_iterator {
 		return *this;
 	}
 	
-	T& operator *() {
+	const T& operator *() {
 		return mat(row, col);
 	}
 	

@@ -52,6 +52,7 @@ class Matrix
 		diagmatr = false;
 		transp = false;
 		diag = false;
+		from_diag = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (type c : *pter)
 			c = type();
@@ -74,6 +75,7 @@ class Matrix
 		transp = false;
 		diag = false;
 		diagmatr = false;
+		from_diag = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = val;
@@ -92,12 +94,16 @@ class Matrix
 		effective_columns = other.effective_columns;
 		start_row = other.start_row;
 		start_column = other.start_column;
-		transp = other.transp;
-		diag = other.diag;
-		diagmatr = other.diagmatr;
+		transp = false;
+		diag = false;
+		diagmatr = false;
+		from_diag = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
-		for (unsigned i = 0; i < (columns * rows); i++)
-			pter->operator[](i) = other.pter->operator[](i);
+		int i = 0;
+		for(const_row_iterator iter = other.row_begin(); iter != other.row_end(); ++iter){
+			pter->operator[](i) = *iter;
+			i++;
+		}
 		std::cout << "COPY CONSTRUCTOR INVOKED" <<std::endl;
 	}
 
@@ -246,6 +252,21 @@ class Matrix
 	Matrix subMatrix(const unsigned start_row, const unsigned start_column, const unsigned end_row,const unsigned end_column) {
 		const unsigned new_eff_rows = end_row - start_row + 1;
 		const unsigned new_eff_columns = end_column - start_column + 1;
+		return  Matrix<type>(rows, columns, new_eff_rows, new_eff_columns, (this->start_row + start_row) ,(this->start_column + start_column), transp, diag, pter);
+	}
+
+	/**
+ 	@brief subMatrix const method (REQUESTED)
+	It returns a const submatrix of the const matrix which called the method(using a protected constructor) w.
+	@param start_row index of the row from which the submatrix starts
+	@param start_column index of the column from which the submatrix starts
+	@param end_row index of the row to which the submatrix ends
+	@param end_column index of the column to which the submatrix ends
+	@return a Matrix which is a logical subMatrix of the calling one 
+  	**/
+	const Matrix subMatrix(const unsigned start_row, const unsigned start_column, const unsigned end_row,const unsigned end_column) const{
+		const unsigned new_eff_rows = end_row - start_row + 1;
+		const unsigned new_eff_columns = end_column - start_column + 1;
 		return Matrix<type>(rows, columns, new_eff_rows, new_eff_columns, (this->start_row + start_row) ,(this->start_column + start_column), transp, diag, pter);
 	}
 
@@ -254,7 +275,22 @@ class Matrix
 	It returns a transpose matrix of the matrix which called the method(using a protected constructor).
 	@return a Matrix which is a logical tranpose Matrix of the calling one  
   	**/
-	Matrix transpose() const{
+	Matrix transpose(){
+		const unsigned new_rows = effective_columns;
+		const unsigned new_columns = effective_rows;
+		const unsigned new_start_row = start_column;
+		const unsigned new_start_column = start_row;
+		const bool new_transp = !transp; 
+
+		return Matrix<type>(columns, rows, new_rows, new_columns, new_start_row, new_start_column, new_transp,diag, pter);
+	}
+
+	/**
+ 	@brief transpose const method (REQUESTED)
+	It returns a const transpose matrix of the matrix which called the method(using a protected constructor).
+	@return a Matrix which is a logical tranpose Matrix of the calling one  
+  	**/
+	const Matrix transpose() const{
 		const unsigned new_rows = effective_columns;
 		const unsigned new_columns = effective_rows;
 		const unsigned new_start_row = start_column;
@@ -269,7 +305,19 @@ class Matrix
 	It returns a "logical" extracted vector which corresponds to the diagonal of the calling Matrix.
 	@return a Matrix which is a logical built diagonal vector of the starting matrix  
   	**/
-	Matrix diagonal() const {
+	Matrix diagonal(){
+		if(!transp)
+			return Matrix<type>(rows, columns, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
+		else
+			return Matrix<type>(columns, rows, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
+	}
+
+	/**
+ 	@brief diagonal const method (REQUESTED)
+	It returns a "logical" extracted const vector which corresponds to the diagonal of the calling Matrix.
+	@return a Matrix which is a logical built diagonal vector of the starting matrix  
+  	**/
+	const Matrix diagonal() const{
 		if(!transp)
 			return Matrix<type>(rows, columns, std::min(effective_rows, effective_columns), 1, start_row, start_column , false, true, pter);
 		else
@@ -369,7 +417,7 @@ class Matrix
 	@param i row which the iteration will be perfomed on
 	@return iterator to the first element contained in the vector
   	**/
-	const_row_iterator row_begin(unsigned i) const { return row_iterator(*this, i, 0); }
+	const_row_iterator row_begin(unsigned i) const { return const_row_iterator(*this, i, 0); }
 	
 	/**
  	@brief row_end const method
@@ -377,7 +425,7 @@ class Matrix
 	@param i row which the iteration will be perfomed on
 	@return iterator to the end(logic) of the row
   	**/
-	const_row_iterator row_end(unsigned i) const { return row_iterator(*this, i + 1, 0); }
+	const_row_iterator row_end(unsigned i) const { return const_row_iterator(*this, i + 1, 0); }
 
 	/**
  	@brief row_begin method
@@ -398,14 +446,14 @@ class Matrix
 	Returns the first iterator used to iterate over the current considered Matrix by rows, but the element pointed cannot be modified(const)
 	@return const_row_iterator to the first element of the current Matrix
   	**/
-	const_row_iterator row_begin() const { return row_iterator(*this, 0, 0); }
+	const_row_iterator row_begin() const { return const_row_iterator(*this, 0, 0); }
 	
 	/**
  	@brief row_end const method
 	Returns the last iterator used to iterate over the current considered Matrix by rows, but the element pointed cannot be modified(const)
 	@return const_row_iterator that represent the logic end of the current Matrix
   	**/
-	const_row_iterator row_end() const { return row_iterator(*this, effective_rows, 0); }
+	const_row_iterator row_end() const { return const_row_iterator(*this, effective_rows, 0); }
 
 	/**
  	@brief col_begin method
@@ -421,7 +469,7 @@ class Matrix
 	@param i column that needs to be iterated
 	@return column_iterator representing the logic end of the column
   	**/
-	column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i + 1); }
+	column_iterator col_end(unsigned i) { return const_column_iterator(*this, 0, i + 1); }
 
 	/**
  	@brief col_begin const method
@@ -429,7 +477,7 @@ class Matrix
 	@param i column that needs to be iterated
 	@return const_column_iterator of the first element of the column
   	**/
-	const_column_iterator col_begin(unsigned i) const { return column_iterator(*this, 0, i); }
+	const_column_iterator col_begin(unsigned i) const { return const_column_iterator(*this, 0, i); }
 
 	/**
  	@brief col_end const method
@@ -458,14 +506,14 @@ class Matrix
 	Returns the first iterator to the first element of current Matrix, used to iterate by column, that cannot modify the elements
 	@return const_column_iterator of the first element of the current Matrix
   	**/
-	const_column_iterator col_begin() const {return column_iterator(*this, 0, 0); }
+	const_column_iterator col_begin() const {return const_column_iterator(*this, 0, 0); }
 	
 	/**
  	@brief col_end const method
 	Returns the last iterator current Matrix, used to iterate by column
 	@return const_column_iterator of logic end of the current Matrix
   	**/
-	const_column_iterator col_end() const {return column_iterator(*this, 0, effective_columns); }
+	const_column_iterator col_end() const {return const_column_iterator(*this, 0, effective_columns); }
 	
     protected:
 
