@@ -468,7 +468,7 @@ class matrix {
 	@param i column that needs to be iterated
 	@return column_iterator representing the logic end of the column
   	**/
-	column_iterator col_end(unsigned i) { return const_column_iterator(*this, 0, i + 1); }
+	column_iterator col_end(unsigned i) { return column_iterator(*this, 0, i + 1); }
 
 	/**
  	@brief col_begin const method
@@ -484,7 +484,7 @@ class matrix {
 	@param i column that needs to be iterated
 	@return const_column_iterator of the logic end of the column
   	**/
-	column_iterator col_end(unsigned i) const { return column_iterator(*this, 0, i + 1); }
+	const_column_iterator col_end(unsigned i) const { return const_column_iterator(*this, 0, i + 1); }
 	
 	/**
  	@brief col_begin method
