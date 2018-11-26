@@ -345,7 +345,7 @@ class matrix {
 
 	/**
  	@brief Destructor(MUST HAVE)
-	When a matrix object goes out of scope, this is automatically called, freeing the memory occupied by that same matrix. 
+	When a matrix object goes out of scope, this is automatically called, freeing the memory occupied by that same matrix.The vector contents will be deleted in case it goes out of scope (handled by shared_ptr) 
   	**/
 	~matrix(){
 		columns = 0;

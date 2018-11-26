@@ -22,6 +22,7 @@ Any given iterator will traverse only in a given order.
 We choose to implement our library with an imperative design, organizing the project three files, the matrix.h file (the template libray), the iterators.h file (the file including all the iterators) and the main.cpp (the test file where we try the functionality of the library).
 We also included a Makefile to allow an easier complilation process and a documentation generated with Doxygen.
 
+Firstly we implemented the must-have methods of container classes, such as default,copy and constructor, the destructor(which is only a facade because the vector one will be called by shared_ptr when its last matrix object will go out of scope) and the move/default assignment(the move one will not be called thanks to RVO).  
 when we create a matrix we have four different variables to indicate its dimensions, the rows (number of rows), columns (nomber of columns), effective rows and effective columns. We added effective rows and effective columns to indicate the effective dimension of the matrix after an operation that modify its dimension (ex. submatrix) and keep rows and columns untouched because they indicate how many elements there are in the effective vector linked to the matrix to be able to find correctly its elements.
 
 We represented the matrices as vectors putting every row of the matrix one after the other in row-order.
@@ -32,7 +33,9 @@ In our project the various operations (transpose, submatrix, diagonal and diagon
 
 we need these flags because if the physical memory is shared we need such information to be able to display the correct information with the various operators (for example the operator() checks which matrix it is working on before retriving the elements).
 
-with this technique we create "views" of a matrix deriving it form a different matrix with one of the operator, this allows us to keep the physical memory shared while creating different type of matrices.
+The practical effect of these methods is the creation of a different view of a given matrix, because when working with large matrixes it's pretty useful being able to simplify and regroup certain parts of the data, possibly without a great time/resource consumption.
+Thanks to shared_ptr and RVO we are able to perform these tasks pretty easily(that's why our operations use an optional constructor, to use RVO) and without any complicated memory management.
+
 
 **operations**
 >transpose
@@ -47,8 +50,23 @@ The diagonal operation effetuate a call to the constructor after calculating the
 
 >diagonalMatrix
 diagonal matrix is different from the other operation, it has its own constructor since it needs to check from which matrix it is derivated to display correctly its informations.
+With this one we had to use two additional flags in respect to the other operations, because the vector which calls this method(it has ton be a vector in order to call this method) can be saved differently in memory.
+Basically we have 3 cases:
+1) Standard covector,submatrix covector and standard vector
+2) Submatrix vector
+3) Diagonal cases
+In the first case, the elements of the diagonal are contiguosly saved in the memory(so they are all next to each other) so taking the correct elements from the original matrix is simple.
+In the second case, however, the elements are saved at a certain distance between one another, so when using the operator() a flag that tells you that that diagonal matrix was built from a submatrix vector is needed(I can't really tell this from the diagonal matrix itself unfortunately).
+Same for the last case, in which the elements are saved in a different way, and the operator() needs to know this otherwise it will pick the wrong elements.
+As for the iterators, they use the operator() to iterate over the matrix,
 
 
   
 
 3. conclusioni
+The route we took to implement this matrix library was a fully imperative one, which was easy to design, the implementation was not so simple as we initially thought but it was manageable, and of course the memory management and the various operation had to be implemented in the best way possible.
+There are some cons to our solution thought, first of all it's not so easily improved and the more operation you add to this kind of library, the more your code will exponentialy growth and become pretty unreadable very soon.
+For example the operator(), the main point which basically does all the logic "division" of the views of the matrix, in case you might add some other operation, will get pretty complicated.
+Moreover, as we stated before, we use flags(boolean variables) to determine the various condition and differentiate the various views we create with the operations, but that will create an overhead of the information(Plain matrixes of course have all that flags set to zero, and that is a waste); in that way an OO design is the better choice.
+On the other hand, the memory manegement and the object ownership in our solution is very simple, every view is still a matrix object after all, and the implementation of the various operation was not really difficult to think.
+

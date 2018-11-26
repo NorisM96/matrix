@@ -1,6 +1,8 @@
 #include "matrix.h"
 #include <string>
 
+
+
 void test_fondamental_methods() {
     std::cout << "***TEST FONDAMENTAL METHODS***\n\n";
 
@@ -319,9 +321,64 @@ void test_library_usage() {
     
 
     std::cout << "creating diagonal matrix from diagonal vector" << std::endl;
-    std::cout << J;
+    std::cout << "starting matrix" << std::endl;
+    std::cout << A;
     std::cout << "starting vector" << std::endl;
+    std::cout << A.diagonal();
+    std::cout << "result matrix" << std::endl;
+    std::cout << A.diagonal().diagonalMatrix();
+
+    std::cout << "Using operators on temporary objects" << std::endl;
+    std::cout << "Transpose of a diagonal vector of a submatrix\n";
+    std::cout << "Starting matrix\n" << A;
+    std::cout << "Result vector \n" << A.subMatrix(0,0,2,2).diagonal().transpose();
+
+    std::cout << "Now the (0, 0) element of a temporary view of the matrix will be changed\n";
+    A.diagonal().transpose().subMatrix(0, 0, 0, 0)(0,0) = 0;
+    std::cout << "Showing some views of the matrix, there should be a 0 somewhere\n";
+    std::cout << A << std::endl << C << std::endl << B << std::endl;
    
+
+}
+
+//custom type used as a test case
+struct course {
+    unsigned int credits;
+    std::string name;
+    course() : credits(0), name("def") {}
+    course(unsigned int cr, std::string n) : credits(cr), name(n) {}
+    bool operator>(const course c) const{
+      return ( credits > c.credits );
+    }
+    unsigned int getCredits() const{
+      return credits;
+    }
+
+};
+
+//overload of standard output operator in order to print a course type 
+std::ostream &operator<<(std::ostream &os,const course c){
+	os << c.name << " ; " << c.credits;
+	return os;
+}
+
+void test_custom_type(){
+    std::cout << "***CUSTOM TYPE TEST***\n\n";
+    std::cout << "***We will create a matrix containg objects of type course***\n\n";
+    matrix<course> A(4, 5);
+    std::cout << "Empty 4x5 matrix\n" << A;
+    course def(6, "Advanced algorithm 2");
+    matrix<course> B(3, 4, def);
+    std::cout << "3x4 matrix with fixed value\n" << B;
+    std::cout << "Operations test on last matrix\n\n\n";
+    std::cout << "Transpose\n";
+    std::cout << B.transpose();
+    std::cout << "Submatrix 2x2\n";
+    std::cout << B.subMatrix(0,0,1,1);
+    std::cout << "Diagonal\n";
+    std::cout << B.diagonal();
+    std::cout << "Diagonal matrix of diagonal\n";
+    std::cout << B.diagonal().diagonalMatrix();
 
 }
 
@@ -343,6 +400,7 @@ int main() {
 
     test_library_usage();
 
+    test_custom_type();
 
 }
 
