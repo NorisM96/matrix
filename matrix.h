@@ -35,7 +35,7 @@ class matrix {
   	@brief Default Constructor (Must have)
   	Used when creating an Empty matrix(Useful to array constructors) 
   	**/
-	matrix() : columns(0), rows(0), start_row(0), start_column(0), transp(false), pter(nullptr), diag(false), diagmatr(false), from_diag(false){}
+	matrix() : columns(0), rows(0), start_row(0), start_column(0), transp(false), pter(nullptr), diag(false), diagmatr(false), from_diag(false), from_subcovector(false){}
 
 	/**
  	 @brief Optional Constructor
@@ -52,6 +52,7 @@ class matrix {
 		transp = false;
 		diag = false;
 		from_diag = false;
+		from_subcovector = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (type c : *pter)
 			c = type();
@@ -75,6 +76,7 @@ class matrix {
 		diag = false;
 		diagmatr = false;
 		from_diag = false;
+		from_subcovector = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		for (unsigned i = 0; i < (columns * rows); i++)
 			pter->operator[](i) = val;
@@ -97,6 +99,7 @@ class matrix {
 		diag = false;
 		diagmatr = false;
 		from_diag = false;
+		from_subcovector = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
 		int i = 0;
 		for(const_row_iterator iter = other.row_begin(); iter != other.row_end(); ++iter){
@@ -122,6 +125,7 @@ class matrix {
 		diag = other.diag;
 		from_diag = other.from_diag;
 		diagmatr = other.diagmatr;
+		from_subcovector = other.from_subcovector;
 		pter = other.pter;	//maybe private method to do this
 		other.pter = nullptr; //same problem as above, but maybe with same class type there is no need
 	}
@@ -143,6 +147,7 @@ class matrix {
 		diag = other.diag;
 		diagmatr = other.diagmatr;
 		from_diag = other.from_diag;
+		from_subcovector = other.from_subcovector;
 		pter = other.pter;	//maybe private method to do this
 		other.pter = nullptr; //same problem as above
 	}
@@ -179,6 +184,7 @@ class matrix {
 		std::swap(other.transp, this->diag);
 		std::swap(other.diagmatr, this->diagmatr);
 		std::swap(other.from_diag, this->from_diag);
+		std::swap(other.from_subcovector, this->from_subcovector);
 	}
 
 	
@@ -222,6 +228,8 @@ class matrix {
 			else{
 				if(from_diag)
 					return pter->operator[]((row + start_row) * (columns) + (row + start_column));
+				else if(from_subcovector)
+					return pter->operator[]((row*columns) + (start_row * columns + start_column));
 				else
 					return pter->operator[](row + (start_row * columns + start_column));
 			}
@@ -230,9 +238,8 @@ class matrix {
 			assert(column == 0);
 			return pter->operator[]((row + start_row) * (columns) + (row + start_column));
 		}
-		else if((diag == true) && (transp == true)){
+		else if((diag == true) && (transp == true))
 			return pter->operator[]((column + start_column) * (rows) + column + start_row);
-		}
 		else if((!diag && (transp == true)))
 			return pter->operator[]((column + start_column) * (rows) + (row + start_row));
 		else
@@ -330,7 +337,10 @@ class matrix {
   	**/
 	const matrix<type> diagonalMatrix() const {
 		assert(effective_columns == 1 || effective_rows == 1);
-		return matrix<type>(*this, true, diag);
+		if(effective_columns == 1 && columns != 1)
+			return matrix<type>(rows, columns, effective_rows, effective_columns, start_row, start_column, true, diag, true, pter);
+		else
+			return matrix<type>(rows, columns, effective_rows, effective_columns, start_row, start_column, true, diag, false, pter);
 	}
 
 	/**
@@ -344,7 +354,6 @@ class matrix {
 		start_column = 0;
 		effective_columns = 0;
 		effective_rows = 0;
-		std::vector<type>().swap(*pter);
 	}
 	
 
@@ -529,26 +538,29 @@ class matrix {
 		this->pter = pter;
 		this->diagmatr = false;
 		this->from_diag = false;
+		this->from_subcovector = false;
 	}
 
 	//Constructor used by matrix operation diagonalmatrix
-	matrix(const matrix<type> &vec, const bool diagmatr, const bool from_diag){
+	matrix(const unsigned rows, const unsigned columns, const unsigned effective_rows, const unsigned effective_columns, const unsigned start_row, const unsigned start_column, const bool diagmatr, const bool from_diag, const bool from_subcovector, const std::shared_ptr<std::vector<type>> pter){
 		this->diagmatr = diagmatr;
-		rows = vec.rows;
-		columns = vec.columns;
-		effective_rows = std::max(vec.effective_rows, vec.effective_columns);
-		effective_columns = std::max(vec.effective_rows, vec.effective_columns);
-		transp = false;
-		diag = false;
-		start_row = vec.start_row;
-		start_column = vec.start_column;
-		pter = vec.pter;
+		this->rows = rows;
+		this->columns = columns;
+		this->effective_rows = std::max(effective_rows, effective_columns);
+		this->effective_columns = std::max(effective_rows, effective_columns);
+		this->transp = false;
+		this->diag = false;
+		this->start_row = start_row;
+		this->start_column = start_column;
+		this->pter = pter;
 		this->from_diag = from_diag;
+		this->from_subcovector = from_subcovector;
+
 	}
 
 
   	std::shared_ptr<std::vector<type>> pter; //shared_ptr to share the memory between the object
-	bool transp, diag, diagmatr, from_diag; //Flags to identify the type of matrix the instance represents
+	bool transp, diag, diagmatr, from_diag, from_subcovector; //Flags to identify the type of matrix the instance represents
 	unsigned columns, rows;  //Rows and column of the WHOLE matrix(not eventually modified by submatrix/diagonal method but by diagonalmatrix and transpose of course yes)
 	unsigned start_row, start_column, effective_rows, effective_columns; //Parameters needed to define the current submatrix dimension
 	const type zero = type(); //Logic zero that has to be returned when accessing a non-diagonal element in a diagonal matrix
@@ -563,7 +575,8 @@ Overload of stream operator that permits printing a matrix object
 @return lvalue reference to output stream
 */
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const matrix<T> &ma){
+std::ostream &operator<<(std::ostream &os, const matrix<T> &ma)
+{
 	for (unsigned r = 0; r < ma.getRows(); r++){
 		for (unsigned c = 0; c < ma.getColumns(); c++){
 			os << "[" << ma(r, c) << "] ";

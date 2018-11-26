@@ -293,13 +293,36 @@ void test_library_usage() {
 
     auto E = D.diagonalMatrix();
 
-    std::cout << "creating the diagonalmatrix starting from D (matrix E)\n" << E << std::endl;
+    std::cout << "creating the diagonalmatrix starting from D (matrix E)(submatrix covector)\n" << E << std::endl;
 
     matrix<int>F(4,1,7);
 
+    std::cout << "creating diagonal matrix from standard covector" << std::endl;
+
     auto O = F.diagonalMatrix();
 
-    std::cout << O ;
+    std::cout << O;
+
+    std::cout << "creating diagonal matrix from standard vector" << std::endl;
+
+    matrix<int>G(1,4,7);
+
+    std::cout << G.diagonalMatrix();
+
+    std::cout << "creating diagonal matrix from submatrix vector" << std::endl;
+    matrix<int> J = A.subMatrix(0,2,0,5);
+  
+    std::cout << "starting vector" << std::endl;
+    std::cout << J;
+    std::cout << "\n" << std::endl;
+    std::cout << J.diagonalMatrix();
+    
+
+    std::cout << "creating diagonal matrix from diagonal vector" << std::endl;
+    std::cout << J;
+    std::cout << "starting vector" << std::endl;
+   
+
 }
 
 int main() {
