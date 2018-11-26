@@ -1,0 +1,54 @@
+1. introduzione al progetto
+
+The project consists in designing and implementing a libray in c++ that handles matrices, vectors and
+some of their operations.
+
+The vectors are defined as matrices with only a row or a column (or both).
+It was requested to implement some specific operations such as:
+>submatrix: return a matrix that contains a contiguous subrange of rows and columns of the original matrix
+>transpose: return a matrix with rows and columns inverted
+>diagonal: return a vector containing the diagonal elements of a given matrix
+>diagonalmatrix: return an unmodifiable diagonal matrix whose diagonal elements are those of a given vector
+
+The matrices returned by such operators must share the data with the original matrix, but direct copy of the matrices and vectors must result in a deep copy (sharing a matrix can be obtained by taking a submatrix extending the whole row and column ranges).
+
+Was requested also a set of iterators for the matrices traversing it in both column and row order.
+Every matrix need to be traversable in both directions regardeless of its natural representation order.
+Any given iterator will traverse only in a given order.
+ 
+
+2. organizzazione e scelte implementative 
+
+We choose to implement our library with an imperative design, organizing the project three files, the matrix.h file (the template libray), the iterators.h file (the file including all the iterators) and the main.cpp (the test file where we try the functionality of the library).
+We also included a Makefile to allow an easier complilation process and a documentation generated with Doxygen.
+
+when we create a matrix we have four different variables to indicate its dimensions, the rows (number of rows), columns (nomber of columns), effective rows and effective columns. We added effective rows and effective columns to indicate the effective dimension of the matrix after an operation that modify its dimension (ex. submatrix) and keep rows and columns untouched because they indicate how many elements there are in the effective vector linked to the matrix to be able to find correctly its elements.
+
+We represented the matrices as vectors putting every row of the matrix one after the other in row-order.
+since the matrix created with the various operations needed to share memory with the original matrix it points to its vector with a shared pointer.
+
+This way we can easily have different matrices that shares data in the project.
+In our project the various operations (transpose, submatrix, diagonal and diagonalMatrix) return a matrix object with the appropriate charatertistics, in particular we use various flags to identify if a matrix is transposed, diagonal a submatrix or , in the special case of diagonal matrix from which matrix it is derivated.
+
+we need these flags because if the physical memory is shared we need such information to be able to display the correct information with the various operators (for example the operator() checks which matrix it is working on before retriving the elements).
+
+with this technique we create "views" of a matrix deriving it form a different matrix with one of the operator, this allows us to keep the physical memory shared while creating different type of matrices.
+
+**operations**
+>transpose
+In our transpose method we just return call to the contructor with the correct rows, column, effective rows and effective columns. we also change the flag "transp" to indicate how the operators need to retrive the informations form the "physical" memory.
+
+>submatrix
+in the submatrix method we calculate the correct number of effective rows/columns and then we effetuate a call to the constructor that returns the matrix.
+the various operator (and the iterators) will use the informations about effective rows/columns to iterate the correct matrix even though in the memory we still have every starting elements.
+
+>diagonal
+The diagonal operation effetuate a call to the constructor after calculating the correct parameters for the new matrix, changing the correct flag.
+
+>diagonalMatrix
+diagonal matrix is different from the other operation, it has its own constructor since it needs to check from which matrix it is derivated to display correctly its informations.
+
+
+  
+
+3. conclusioni
