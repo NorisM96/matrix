@@ -127,14 +127,22 @@ void test_diagonalmatrix() {
 
 void test_deepcopy(){
     matrix<int> A(4,5,6),B(A);
-    std::cout<< "matrix copy costructor \n" << B << std::endl;
+    std::cout<< "***TEST DEEP COPY*** \n\n" << B << std::endl;
+    
     matrix<int> C(B.transpose()); //This thing shall not deep copy the object (RVO but it's theoretically move constructor)
     std::cout<< "matrix copy costructor on transp method \n" << C << std::endl;
-    std::cout<< "Chainging 1,1 element, the first two matrixies does not have to share memory, the last two does \n";
+    std::cout<< "Changing 1,1 element, the first two matrixies does not have to share memory, the last two does \n";
     C(1,1) = 0;
+    
     matrix<int> D = B;
     std::cout<< "Printing matrixes \n" << A << std::endl << B << std::endl << C;    
     
+    std::cout<< "Deep copying a Diagonal Matrix" << std::endl;
+    std::cout<< "Start matrix\n" << A;
+    matrix<int> E = A.diagonal().diagonalMatrix();
+    std::cout<< "\nDiagonal Matrix\n" << E;
+    matrix<int> F = E;
+    std::cout<< "\nDeep copy matrix\n" << F; 
 }
 
 void test_iterators() {
@@ -364,23 +372,33 @@ std::ostream &operator<<(std::ostream &os,const course c){
 
 void test_custom_type(){
     std::cout << "***CUSTOM TYPE TEST***\n\n";
+
     std::cout << "***We will create a matrix containg objects of type course***\n\n";
+    
     matrix<course> A(4, 5);
+    
     std::cout << "Empty 4x5 matrix\n" << A;
+    
     course def(6, "Advanced algorithm 2");
     matrix<course> B(3, 4, def);
+    
     std::cout << "3x4 matrix with fixed value\n" << B;
+    
     std::cout << "Operations test on last matrix\n\n\n";
     std::cout << "Transpose\n";
     std::cout << B.transpose();
+    
     std::cout << "Submatrix 2x2\n";
     std::cout << B.subMatrix(0,0,1,1);
+    
     std::cout << "Diagonal\n";
     std::cout << B.diagonal();
+    
     std::cout << "Diagonal matrix of diagonal\n";
     std::cout << B.diagonal().diagonalMatrix();
 
 }
+
 
 int main() {
 
@@ -404,3 +422,4 @@ int main() {
 
 }
 
+ 

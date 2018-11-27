@@ -35,7 +35,7 @@ class matrix {
   	@brief Default Constructor (Must have)
   	Used when creating an Empty matrix(Useful to array constructors) 
   	**/
-	matrix() : columns(0), rows(0), start_row(0), start_column(0), transp(false), pter(nullptr), diag(false), diagmatr(false), from_diag(false), from_subcovector(false){}
+	matrix() : columns(0), rows(0), start_row(0), start_column(0), effective_columns(0), effective_rows(0), transp(false), pter(nullptr), diag(false), diagmatr(false), from_diag(false), from_subcovector(false){}
 
 	/**
  	 @brief Optional Constructor
@@ -78,8 +78,9 @@ class matrix {
 		from_diag = false;
 		from_subcovector = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
-		for (unsigned i = 0; i < (columns * rows); i++)
+		for(int i = 0; i <(columns * rows); i++){
 			pter->operator[](i) = val;
+		}
 	}
 	
 
@@ -101,12 +102,10 @@ class matrix {
 		from_diag = false;
 		from_subcovector = false;
 		pter = std::make_shared<std::vector<T>>(columns * rows);
-		int i = 0;
-		for(const_row_iterator iter = other.row_begin(); iter != other.row_end(); ++iter){
-			pter->operator[](i) = *iter;
-			i++;
+		for (unsigned r = 0; r < getRows(); r++){
+			for (unsigned c = 0; c < getColumns(); c++)
+				this->operator()(r, c) = other(r, c);
 		}
-		std::cout << "COPY CONSTRUCTOR INVOKED" <<std::endl;
 	}
 
 	/**
@@ -115,7 +114,6 @@ class matrix {
 	@param other rvalue reference to a matrix
   	**/
 	matrix(matrix<T> &&other){
-		std::cout << "MOVE CONSTUCTOR INVOKED" << std::endl;
 		columns = other.columns;
 		rows = other.rows;
 		effective_rows = other.effective_rows;
@@ -126,8 +124,8 @@ class matrix {
 		from_diag = other.from_diag;
 		diagmatr = other.diagmatr;
 		from_subcovector = other.from_subcovector;
-		pter = other.pter;	//maybe private method to do this
-		other.pter = nullptr; //same problem as above, but maybe with same class type there is no need
+		pter = other.pter;
+		other.pter = nullptr;
 	}
 
 	/**
@@ -136,7 +134,6 @@ class matrix {
 	@param other rvalue reference to the rhs matrix
   	**/
 	matrix<type> &operator=(matrix<type> &&other) {
-		std::cout<<"MOVE ASSIGNMENT INVOKED" << std::endl;
 		columns = other.columns;
 		rows = other.rows;
 		effective_rows = other.effective_rows;
@@ -158,7 +155,6 @@ class matrix {
 	@param other lvalue reference to the rhs matrix
   	**/
 	matrix &operator=(const matrix<type> &other){
-		std::cout<<"NORMAL ASSIGNMENT INVOKED" << std::endl;
 		if (this != &other){
 			matrix<T> tmp(other);
 			this->swap(tmp);
@@ -523,7 +519,7 @@ class matrix {
   	**/
 	const_column_iterator col_end() const {return const_column_iterator(*this, 0, effective_columns); }
 	
-    protected:
+    private:
 
 	//Constructor used by matrix operation transpose,submatrix and diagonal
 	matrix(const unsigned rows, const unsigned columns, const unsigned eff_rows, const unsigned eff_columns, const unsigned start_row, const unsigned start_column, const bool transp, const bool diag, const std::shared_ptr<std::vector<type>> pter){
