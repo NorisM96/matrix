@@ -38,6 +38,29 @@ void test_fondamental_methods() {
     std::cout << "modified positions (1,1) and (2,2)\n" << F << std::endl;
 }
 
+//test to the deep copy of a matrix
+void test_deepcopy(){
+    matrix<int> A(4,5,6),B(A);
+    std::cout<< "***TEST DEEP COPY*** \n\n" << B << std::endl;
+    
+    matrix<int> C(B.transpose()); //This thing shall not deep copy the object (RVO but it's theoretically move constructor)
+    std::cout<< "matrix copy costructor on transp method \n" << C << std::endl;
+    std::cout<< "Changing 1,1 element, the first two matrixies does not have to share memory, the last two does \n";
+    C(1,1) = 000;
+    
+    matrix<int> D = B;
+    std::cout<< "Printing matrixes \n" << A << std::endl << B << std::endl << C;    
+    
+    std::cout<< "Deep copying a Diagonal Matrix" << std::endl;
+    std::cout<< "Start matrix\n" << A;
+    matrix<int> E = A.diagonal().diagonalMatrix();
+    std::cout<< "\nDiagonal Matrix\n" << E;
+    matrix<int> F = E;
+    std::cout<< "\nDeep copy matrix\n" << F;
+    F(0,0) = 1;
+    std::cout<< "\nMatrixes after a modification on the deep copied one\n" << F << std::endl << E;
+}
+
 //Test on the tranpose method of matrix
 void test_transpose() {
     std::cout << "***TEST TRANSPOSE METHOD***\n\n";
@@ -123,33 +146,10 @@ void test_diagonalmatrix() {
 
     std::cout << "matrix A\n" << A << std::endl;
 
-    auto B = A.diagonalMatrix();
+    const auto B = A.diagonalMatrix();
 
     std::cout << "diagonal matrix of A\n" << B << std::endl;
 
-}
-
-//test to the deep copy of a matrix
-void test_deepcopy(){
-    matrix<int> A(4,5,6),B(A);
-    std::cout<< "***TEST DEEP COPY*** \n\n" << B << std::endl;
-    
-    matrix<int> C(B.transpose()); //This thing shall not deep copy the object (RVO but it's theoretically move constructor)
-    std::cout<< "matrix copy costructor on transp method \n" << C << std::endl;
-    std::cout<< "Changing 1,1 element, the first two matrixies does not have to share memory, the last two does \n";
-    C(1,1) = 0;
-    
-    matrix<int> D = B;
-    std::cout<< "Printing matrixes \n" << A << std::endl << B << std::endl << C;    
-    
-    std::cout<< "Deep copying a Diagonal Matrix" << std::endl;
-    std::cout<< "Start matrix\n" << A;
-    matrix<int> E = A.diagonal().diagonalMatrix();
-    std::cout<< "\nDiagonal Matrix\n" << E;
-    matrix<int> F = E;
-    std::cout<< "\nDeep copy matrix\n" << F;
-    F(0,0) = 1;
-    std::cout<< "\nMatrixes after a modification on the deep copied one\n" << F << std::endl << E;
 }
 
 //Test on the various iterators we implemented
@@ -357,6 +357,36 @@ void test_library_usage() {
 
 }
 
+void test_libray_usage2() {
+    std::cout << "***TEST LIBRARY USAGE 2***\n\n";
+
+    matrix<int>A (3,6);
+
+    for(auto iter = A.row_begin(); iter != A.row_end(); ++iter) {
+        *iter = rand() % 50;
+    } 
+
+    std::cout << "matrix A\n" << A << std::endl;
+
+    auto B = A.transpose().subMatrix(0,0,1,1).diagonal();
+
+    std::cout << "diagonal of the submatrix (0,0,1,1) of the transposed A (called B)\n" << B << std::endl;
+
+    matrix<int> C = B.diagonalMatrix();
+
+    std::cout << "diagonal matrix of matrix B (called C)\n";
+
+    for (auto iter = C.row_begin(); iter != C.row_end(); ++iter) {
+        std::cout << *iter << " ";
+    }
+
+    std::cout << "\nmatrix C with cout\n" << C << std::endl;
+
+
+
+
+}
+
 //custom type used as a test case
 struct course {
     unsigned int credits;
@@ -405,18 +435,50 @@ void test_custom_type(){
     std::cout << "Diagonal matrix of diagonal\n";
     std::cout << B.diagonal().diagonalMatrix();
 
+    
+
+}
+
+void diagonal_problem() {
+    matrix<int>A (1,6);
+
+    for(auto iter = A.row_begin(); iter != A.row_end(); ++iter) {
+        *iter = rand() % 50;
+    }
+
+    std::cout << "matrix A\n" << A << std::endl;
+
+    auto B = A.diagonalMatrix();
+    const auto C = A.diagonalMatrix();
+
+    std::cout << "non const diagonalmatrix\n\n";
+
+    for(auto iter = B.row_begin(); iter != B.row_end(); ++iter ) {
+        std::cout << *iter << " ";
+    }
+
+        std::cout << "const diagonalmatrix\n\n";
+
+    for(auto iter = C.row_begin(); iter != C.row_end(); ++iter ) {
+        std::cout << *iter << " ";
+    }
+
+    
+
+
 }
 
 
 int main() {
+    /*
 
     test_fondamental_methods();
 
     test_deepcopy();
 
-    test_subMatrix();
-
     test_transpose();
+
+    test_subMatrix();
 
     test_diagonal();
 
@@ -425,8 +487,13 @@ int main() {
     test_iterators();
 
     test_library_usage();
+    */
 
-    test_custom_type();
+    //test_libray_usage2();
+
+    //test_custom_type();
+
+    diagonal_problem();
 
 }
 
