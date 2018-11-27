@@ -70,9 +70,27 @@ In the main.cpp we included some test performed on our library, divided in metho
 As for the const matrixes, we decided that every view of the matrix should be constant as well, so the elements of it might not be modified. The only way of modyfing those element is to use a previous view variable which was not constant or perform a deep copy.
 
 
-  
+3.Problems about diagonalMatrix and const methods
+Now we explain the main limitation of our imperative design solution, we decided to give it a separated section to be as much clear as possible.
+The const methods and diagonal matrix work just fine when dealing with temporary object operations like:
+A.diagonalMatrix()(0,0) = 1 !!ERROR!! read-only location
+A.diagonalMatrix().transpose()(0,0) = 1 !!ERROR!! read-only location
 
-3. Conclusions
+When we use RVO to optimize the time/space consumption of our operations, then there is a BIG problem assigning the result of that operation to another variable.
+What if I want to return a const object through RVO?
+We thought that the compiler would understant that making the return object const would imply that if the other object is non-const that is:
+matrix<T> A = B.diagonalMatrix(); would return an error of some sort, because practically you can't move a const object.
+Problem is that the rhs of this is a temporary value, and is "forced" into a non-const object,
+so if it really shares a memory I can modify its elements so
+matrix<T> A = B.diagonalMatrix();
+A(1,1) = 1;
+WOULD WORK AND WILL OVERWRITE EVERY MATRIX THAT SHARES THAT PARTICULAR POSITION OF THE MATRIX
+In this case there are several options:
+1) Force everyone(maybe with assert) using the library to use const matrix<int> declaration instead of  auto(which will guess the type ad matrix<int>) when working with diagonal matrixes and every view that comes after that, and this will make everything work.
+2) Using a additional class that is a kind of matrix, with the const member representing the vector, but of course it will be used as a return of diagonal matrix method and maybe as const operation methods.
+ 
+
+4. Conclusions
 The route we took to implement this matrix library was a fully imperative one, which was easy to design, the implementation was not so simple as we initially thought but it was manageable, and of course the memory management and the various operation had to be implemented in the best way possible.
 There are some cons to our solution thought, first of all it's not so easily improved and the more operation you add to this kind of library, the more your code will exponentialy growth and become pretty unreadable very soon.
 For example the operator(), the main point which basically does all the logic "division" of the views of the matrix, in case you might add some other operation, will get pretty complicated.

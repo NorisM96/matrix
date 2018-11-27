@@ -329,6 +329,11 @@ class matrix {
 	/**
  	@brief diagonalmatrix method (REQUESTED)
 	It returns a "logical" const diagonal matrix from the calling matrix(which is a vector or covector).
+	ATTENTION!!!!!!!!
+	This method(alongside every method with const matrix as a return type) is kind of tricky.
+	If the variable that takes the object(the lhs of an assignment or the copy constructed on) is a const matrix<type> then no problem, but if it is a auto type or matrix<type> then 
+	the RVO doesen't care about it and it will move THE MATRIX<TYPE> object, which will result in a mutable diagonalMatrix.
+	The fully explanation of the issue will be written on the relation file of our project, please read it.
 	@return a matrix which is a logical built diagonal matrix of the starting vector/covector 
   	**/
 	const matrix<type> diagonalMatrix() const {

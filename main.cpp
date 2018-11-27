@@ -123,9 +123,10 @@ void test_diagonalmatrix() {
 
     std::cout << "matrix A\n" << A << std::endl;
 
-    auto B = A.diagonalMatrix();
+    const matrix<int> B = A.diagonalMatrix().transpose();
 
     std::cout << "diagonal matrix of A\n" << B << std::endl;
+
 
 }
 
@@ -144,7 +145,7 @@ void test_deepcopy(){
     
     std::cout<< "Deep copying a Diagonal Matrix" << std::endl;
     std::cout<< "Start matrix\n" << A;
-    matrix<int> E = A.diagonal().diagonalMatrix();
+    const matrix<int> E = A.diagonal().diagonalMatrix();
     std::cout<< "\nDiagonal Matrix\n" << E;
     matrix<int> F = E;
     std::cout<< "\nDeep copy matrix\n" << F;
@@ -353,7 +354,6 @@ void test_library_usage() {
     A.diagonal().transpose().subMatrix(0, 0, 0, 0)(0,0) = 0;
     std::cout << "Showing some views of the matrix, there should be a 0 somewhere\n";
     std::cout << A << std::endl << C << std::endl << B << std::endl;
-   
 
 }
 
