@@ -2,7 +2,7 @@
 #include <string>
 
 
-
+//Test on the must-have methods
 void test_fondamental_methods() {
     std::cout << "***TEST FONDAMENTAL METHODS***\n\n";
 
@@ -38,6 +38,7 @@ void test_fondamental_methods() {
     std::cout << "modified positions (1,1) and (2,2)\n" << F << std::endl;
 }
 
+//Test on the tranpose method of matrix
 void test_transpose() {
     std::cout << "***TEST TRANSPOSE METHOD***\n\n";
 
@@ -57,6 +58,7 @@ void test_transpose() {
 
 }
 
+//Test on the submatrix method of matrix
 void test_subMatrix() {
     matrix<int> A(4,5);
 
@@ -79,6 +81,7 @@ void test_subMatrix() {
     std::cout << "submatrix starting from (0,1) and ending in (1,3)\n" << D << std::endl; 
 }
 
+//Test on the diagonal method of matrix
 void test_diagonal() {
 
     std::cout << "***DIAGONAL TEST***\n\n";
@@ -113,6 +116,7 @@ void test_diagonal() {
     
 }
 
+//Test on the diagonal matrix method of matrix
 void test_diagonalmatrix() {
     std::cout << "***TEST DIAGONALMATRIX***\n\n";
     matrix<int> A(1,6,6);
@@ -125,6 +129,7 @@ void test_diagonalmatrix() {
 
 }
 
+//test to the deep copy of a matrix
 void test_deepcopy(){
     matrix<int> A(4,5,6),B(A);
     std::cout<< "***TEST DEEP COPY*** \n\n" << B << std::endl;
@@ -142,9 +147,12 @@ void test_deepcopy(){
     matrix<int> E = A.diagonal().diagonalMatrix();
     std::cout<< "\nDiagonal Matrix\n" << E;
     matrix<int> F = E;
-    std::cout<< "\nDeep copy matrix\n" << F; 
+    std::cout<< "\nDeep copy matrix\n" << F;
+    F(0,0) = 1;
+    std::cout<< "\nMatrixes after a modification on the deep copied one\n" << F << std::endl << E;
 }
 
+//Test on the various iterators we implemented
 void test_iterators() {
     std::cout << "***TEST ITERATORS***\n\n";
 
@@ -277,7 +285,7 @@ void test_iterators() {
 
 }
 
-
+//Test of a particular usage of the matrix operations 
 void test_library_usage() {
     std::cout << "***TEST LIBRARY USAGE***\n\n";
 
